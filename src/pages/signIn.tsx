@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import Link from '@mui/material/Link';
+import { useAuth } from '../firebase/userAuth'
 
 const SignIn1 = styled("div")({
   background: `linear-gradient(180deg, rgba(74, 50, 209, 1) -3.0616171314629196e-15%, rgba(0, 0, 0, 1) 99.99999999999999%)`,
@@ -18,6 +19,7 @@ const SignIn1 = styled("div")({
   boxSizing: `border-box`,
   overflow: `hidden`,
 });
+
 
 const WhiteBorder = styled("div")({
   backgroundColor: `rgba(255, 255, 255, 1)`,
@@ -155,14 +157,26 @@ const DontHaveAnAccountSig = styled("div")({
 });
 
 function SignIn(): JSX.Element {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { signIn } = useAuth();
   const switchPage = useNavigate();
 
   const handleSignUp = () => {
     switchPage('/signup'); //user doesnt have an account
   };
 
-  const handleSignIn = () => {
-    switchPage('/homePage')  //user signs into account
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    try {
+      await signIn(email, password);
+      switchPage('/homePage');
+    } catch (error) {
+      setError('Failed to sign in');
+      console.error(error);
+    }
   };
   
   return (
@@ -171,16 +185,31 @@ function SignIn(): JSX.Element {
       <Slogan>{`Experience Movies Better`}</Slogan>
       <WhiteBorder>
         <SignIn2>{`Sign In`}</SignIn2>
-        <InputLabel htmlFor="email">Email</InputLabel>
-        <Input id="email" type="email" />       
-        <InputLabel htmlFor="password">Password</InputLabel>
-        <Input id="password" type="password" />      
-        <SignInButton onClick={handleSignIn}>Sign in</SignInButton>
+        <form onSubmit={handleSignIn}>
+          <InputLabel htmlFor="email">Email</InputLabel>
+          <Input 
+            id="email" 
+            type="email" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />       
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <Input 
+            id="password" 
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />      
+          {/*{error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}*/}
+          <SignInButton type="submit">Sign in</SignInButton>
+        </form>
         <DontHaveAnAccountSig> 
-        <HoverStyle onClick={handleSignUp}>
-          Don't have an account? Sign up
-        </HoverStyle>
-      </DontHaveAnAccountSig>
+          <HoverStyle onClick={handleSignUp}>
+            Don't have an account? Sign up
+          </HoverStyle>
+        </DontHaveAnAccountSig>
       </WhiteBorder>
     </SignIn1>
   );

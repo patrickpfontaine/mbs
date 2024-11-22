@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import './index.css';
 import SignIn from './pages/signIn';
 import SignUp from './pages/signUp';
+import HomePage from './pages/homePage';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -16,6 +17,7 @@ root.render(
       <Routes>
         <Route path="/" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/homePage" element={<HomePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

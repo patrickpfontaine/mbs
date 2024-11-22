@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import Link from '@mui/material/Link';
+import { useAuth } from '../firebase/userAuth';
 
 const SignUp1 = styled("div")({
   background: `linear-gradient(180deg, rgba(74, 50, 209, 1) -3.0616171314629196e-15%, rgba(0, 0, 0, 1) 99.99999999999999%)`,
@@ -155,14 +156,34 @@ const AlreadyHaveAnAccount = styled("div")({
 });
 
 function SignUp(): JSX.Element {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [homeAddress, setHomeAddress] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [error, setError] = useState('');
+  const { signUp } = useAuth();
   const switchPage = useNavigate();
     
   const handleSignIn = () => {
     switchPage('/signin');//user already has account
   };
 
-  const handleSignUp = () => {
-                            //create account for user
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    //setError('');
+    if (password !== confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
+    try {
+      await signUp(email, password);
+      switchPage('/signin');
+      // EVENTUALLY SAVE ADDITIONAL USER INFO TO DATABASE (address and phone)
+    } catch (error) {
+      setError('Failed to create an account');
+      console.error(error);
+    }
   };
   
   return (
@@ -171,19 +192,50 @@ function SignUp(): JSX.Element {
       <Slogan>{`Experience Movies Better`}</Slogan>
       <WhiteBorder>
         <SignUp2>{`Sign Up`}</SignUp2>
-        <InputLabel htmlFor="email">Email</InputLabel>
-        <Input id="email" type="email" />
-        <InputLabel htmlFor="password">Password</InputLabel>
-        <Input id="password" type="password" />
-        <InputLabel htmlFor="confirmPassword">Confirm Password</InputLabel>
-        <Input id="confirmPassword" type="password" />
-        <InputLabel htmlFor="homeAddress">Home Address</InputLabel>
-        <Input id="homeAddress" type="text" />
-        <InputLabel htmlFor="phoneNumber">Phone Number</InputLabel>
-        <Input id="phoneNumber" type="tel" />
+        <form onSubmit={handleSignUp}>
+       {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+          <InputLabel htmlFor="email">Email</InputLabel>
+          <Input 
+            id="email" 
+            type="email" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <Input 
+            id="password" 
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <InputLabel htmlFor="confirmPassword">Confirm Password</InputLabel>
+          <Input 
+            id="confirmPassword" 
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          <InputLabel htmlFor="homeAddress">Home Address</InputLabel>
+          <Input 
+            id="homeAddress" 
+            type="text"
+            value={homeAddress}
+            onChange={(e) => setHomeAddress(e.target.value)}
+          />
+          <InputLabel htmlFor="phoneNumber">Phone Number</InputLabel>
+          <Input 
+            id="phoneNumber" 
+            type="tel"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+          />
         <SignUpButton onClick = {handleSignUp}>
             Sign up
         </SignUpButton>
+        </form>
         <AlreadyHaveAnAccount>
         <HoverStyle onClick={handleSignIn}>
           Already have an account? Sign in
