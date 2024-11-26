@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-//import { getAnalytics } from "firebase/analytics";
 import { getAuth } from 'firebase/auth';
+import { getDatabase } from "firebase/database";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -14,10 +14,13 @@ const firebaseConfig = {
   storageBucket: "moviebooking-ca757.firebasestorage.app",
   messagingSenderId: "729733207947",
   appId: "1:729733207947:web:91759a6a02a7f13924818e",
-  measurementId: "G-HNM1NKH78J"
+  measurementId: "G-HNM1NKH78J",
+  databaseURL: "https://moviebooking-ca757-default-rtdb.firebaseio.com/"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-//const analytics = getAnalytics(app);
+
+export const database = getDatabase(app);
+
 export const auth = getAuth(app);

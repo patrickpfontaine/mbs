@@ -1,14 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import './index.css';
-import SignIn from './pages/signIn';
-import SignUp from './pages/signUp';
-import HomePage from './pages/homePage';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import "./index.css";
+import SignIn from "./pages/signIn";
+import SignUp from "./pages/signUp";
+import HomePage from "./pages/homePage";
+import ProfilePage from "./pages/profilePage";
+import AdminPage from "./pages/adminPage";
+import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 
 root.render(
@@ -18,6 +25,8 @@ root.render(
         <Route path="/" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/homePage" element={<HomePage />} />
+        <Route path="/profilePage" element={<ProfilePage />} />
+        <Route path="/adminPage" element={<AdminPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
