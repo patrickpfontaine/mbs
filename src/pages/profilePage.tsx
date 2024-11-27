@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
-import profileImage from "../images/profileImage.jpg";
+import HomeImage from "../images/HomeIcon.png";
 import { useNavigate } from "react-router-dom";
 import { ref, get } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
@@ -184,7 +184,7 @@ function ProfilePage(): JSX.Element {
             <Slogan>Experience Movies Better</Slogan>
           </div>
           <HomeButton onClick={homePage}>
-            <img src={profileImage} alt="Profile Page" />
+            <img src={HomeImage} alt="Home Page" />
           </HomeButton>
         </Header>
         <Title>Your Profile</Title>

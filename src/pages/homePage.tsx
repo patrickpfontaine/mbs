@@ -131,10 +131,8 @@ const MovieCard = styled("div")({
 
 const MoviePoster = styled("div")({
   width: `100%`,
-  //maxWidth: "25%",
   paddingTop: `140%`, // 2:3 aspect ratio
-  backgroundColor: `rgba(0, 0, 0, .5)`,
-  position: `relative`,
+  background: `linear-gradient(180deg, DarkSlateBlue 0%, CadetBlue 100%)`,
 });
 
 const MovieTitle = styled("h3")({
@@ -149,7 +147,7 @@ const ProfileButton = styled("button")({
   background: "none",
   border: `none`,
   cursor: "pointer",
-  //padding: `10px`,
+  //padding: `0px`,
 });
 
 interface Movie {
@@ -192,6 +190,10 @@ function HomePage(): JSX.Element {
     switchPage("/profilePage");
   };
 
+  const checkoutPage = (movieId: string) => {
+    switchPage(`/checkoutPage/${movieId}`);
+  };
+
   const filteredMovies = movies.filter((movie) => movie.status === filter);
 
   return (
@@ -220,10 +222,15 @@ function HomePage(): JSX.Element {
         </MovieFilters>
         <MovieCardDeck>
           {filteredMovies.map((movie) => (
-            <MovieCard key={movie.id}>
-              <MoviePoster />
-              <MovieTitle>{movie.title}</MovieTitle>
-            </MovieCard>
+            <ProfileButton
+              onClick={() => checkoutPage(movie.id)}
+              key={movie.id}
+            >
+              <MovieCard key={movie.id}>
+                <MoviePoster />
+                <MovieTitle>{movie.title}</MovieTitle>
+              </MovieCard>
+            </ProfileButton>
           ))}
         </MovieCardDeck>
       </WhiteCanvas>

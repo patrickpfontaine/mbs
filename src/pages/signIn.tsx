@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../firebase/userAuth';
-import '../components/reusableComponents';
+import React, { useState } from "react";
+import { styled } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../firebase/userAuth";
+import "../components/reusableComponents";
 
 const Background = styled("div")({
   background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, rgb(0, 0, 0) 100%)`,
@@ -17,12 +17,12 @@ const Background = styled("div")({
   overflow: `hidden`,
 });
 
-
 const WhiteCanvas = styled("div")({
   backgroundColor: `rgb(255, 255, 255)`,
   borderRadius: `10px`,
-  width: `528px`,
-  height: `413px`,
+  width: `100%`,
+  maxWidth: "30%",
+  //height: `413px`,
   position: `absolute`,
   top: `35%`,
   padding: `30px`,
@@ -41,7 +41,7 @@ const Mbs = styled("div")({
 
 const Slogan = styled("div")({
   color: `rgb(205, 182, 255)`,
-  fontStyle:"italic",
+  fontStyle: "italic",
   fontFamily: `Robotto, sans-serif`,
   fontWeight: `100`,
   fontSize: `20px`,
@@ -90,14 +90,14 @@ const SignInButton = styled("button")({
   marginTop: `15px`,
 });
 
-const SignUpButton = styled('button')({
-  border:'none',
-  background:"none",
-  cursor: 'pointer',
+const SignUpButton = styled("button")({
+  border: "none",
+  background: "none",
+  cursor: "pointer",
   width: `100%`,
-  color: 'inherit',
-  '&:hover': {
-    textDecoration: 'underline',
+  color: "inherit",
+  "&:hover": {
+    textDecoration: "underline",
   },
   fontFamily: `Inter`,
   fontWeight: `700`,
@@ -105,66 +105,64 @@ const SignUpButton = styled('button')({
   marginTop: `45px`,
 });
 
-
 function SignIn(): JSX.Element {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { signIn } = useAuth();
   const switchPage = useNavigate();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  
   //signs the user in through firebase
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await signIn(email, password);
-      switchPage('/homePage');
+      switchPage("/homePage");
     } catch (error) {
-      setError('Failed to sign in');
+      setError("Failed to sign in");
     }
   };
 
   //brings user to SignUp page if user doesnt have an account
   const handleSignUp = () => {
-    switchPage('/signup'); 
+    switchPage("/signup");
   };
-  
+
   return (
     <Background>
       <Mbs>{`MBS`}</Mbs>
       <Slogan>{`Experience Movies Better`}</Slogan>
       <WhiteCanvas>
         <SignInHeader>{`Sign In`}</SignInHeader>
-        {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+        {error && (
+          <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>
+        )}
         <form onSubmit={handleSignIn}>
           <InputBox htmlFor="email">Email</InputBox>
-          <Input 
-            //id="email" 
-            type="email" 
+          <Input
+            //id="email"
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-          />       
+          />
           <InputBox htmlFor="password">Password</InputBox>
-          <Input 
-            //id="password" 
+          <Input
+            //id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-          />   
+          />
           <SignInButton type="submit">Sign in</SignInButton>
         </form>
-         
-          <SignUpButton onClick={handleSignUp}>
-            Don't have an account? Sign up
-          </SignUpButton>
-        
+
+        <SignUpButton onClick={handleSignUp}>
+          Don't have an account? Sign up
+        </SignUpButton>
       </WhiteCanvas>
     </Background>
   );
 }
 
 export default SignIn;
-

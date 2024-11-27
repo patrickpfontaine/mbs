@@ -2,6 +2,8 @@ import React, { useState, useEffect, ChangeEvent } from "react";
 import { ref, get, push, remove } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
 import { styled } from "@mui/material/styles";
+import profileImage from "../images/profileImage.jpg";
+import { useNavigate } from "react-router-dom";
 
 const Background = styled("div")({
   background: `linear-gradient(180deg, Maroon 0%, black 100%)`,
@@ -12,7 +14,7 @@ const Background = styled("div")({
   alignItems: `center`,
 });
 
-const WhiteCanvas = styled("main")({
+const WhiteCanvas = styled("div")({
   backgroundColor: `rgb(255, 255, 255)`,
   padding: `40px`,
   width: `100%`,
@@ -59,6 +61,19 @@ const Title = styled("h1")({
   marginBottom: "20px",
 });
 
+const AdminDisplay = styled("div")({
+  padding: "10px",
+  borderRadius: "10px",
+  border: "1  black",
+  display: "flex",
+  flexDirection: "row",
+  gap: "10px",
+  marginBottom: "20px",
+  alignSelf: "flex",
+  //justifyContent: "space-between",
+  //alignItems: "center",
+});
+
 const Input = styled("input")({
   padding: "10px",
   borderRadius: "5px",
@@ -85,16 +100,20 @@ const Button = styled("button")({
 });
 
 const MovieList = styled("ul")({
-  listStyle: "none",
-  padding: 0,
+  //listStyle: "none",
+  //padding: 0,
+  width: "100%",
+  alignSelf: "flex",
+  //alignItems: "center",
 });
 
 const MovieItem = styled("li")({
-  backgroundColor: "#f0f0f0",
+  backgroundColor: "#LightCoral",
   padding: "10px",
   borderRadius: "5px",
   marginBottom: "10px",
   display: "flex",
+  alignSelf: "flex",
   justifyContent: "space-between",
   alignItems: "center",
 });
@@ -104,7 +123,14 @@ const Select = styled("select")({
   borderRadius: "5px",
   border: "1px solid black",
   marginBottom: "20px",
-  alignSelf: "flex-start",
+  alignSelf: "flex",
+});
+
+const ProfileButton = styled("button")({
+  background: "none",
+  border: `none`,
+  cursor: "pointer",
+  //padding: `10px`,
 });
 
 interface Movie {
@@ -120,6 +146,7 @@ interface Movie {
 }
 
 function AdminPage() {
+  const switchPage = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [newMovie, setNewMovie] = useState({
     title: "",
@@ -184,6 +211,10 @@ function AdminPage() {
     getMovies();
   };
 
+  const profilePage = () => {
+    switchPage("/profilePage");
+  };
+
   return (
     <Background>
       <WhiteCanvas>
@@ -192,86 +223,93 @@ function AdminPage() {
             <MBS>MBS</MBS>
             <SloganTxt>Experience Movies Better</SloganTxt>
           </div>
+          <ProfileButton onClick={profilePage}>
+            <img src={profileImage} alt="Profile Page" />
+          </ProfileButton>
         </Header>
         <Title>Admin: Movie Database</Title>
-        <form onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            name="title"
-            value={newMovie.title}
-            onChange={handleInputChange}
-            placeholder="Movie Title"
-            required
-          />
-          <Input
-            type="text"
-            name="year"
-            value={newMovie.year}
-            onChange={handleInputChange}
-            placeholder="Year Created"
-            required
-          />
-          <Input
-            type="text"
-            name="location"
-            value={newMovie.location}
-            onChange={handleInputChange}
-            placeholder="Location"
-            required
-          />
-          <Input
-            type="text"
-            name="time"
-            value={newMovie.time}
-            onChange={handleInputChange}
-            placeholder="Starting Time"
-            required
-          />
-          <Input
-            type="text"
-            name="price"
-            value={newMovie.price}
-            onChange={handleInputChange}
-            placeholder="Price"
-            required
-          />
-          <Input
-            type="text"
-            name="cast"
-            value={newMovie.cast}
-            onChange={handleInputChange}
-            placeholder="Cast"
-            required
-          />
-          <Input
-            type="text"
-            name="movieLength"
-            value={newMovie.movieLength}
-            onChange={handleInputChange}
-            placeholder="Movie Length"
-            required
-          />
-          <Select
-            name="status"
-            value={newMovie.status}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="Now Playing">Now Playing</option>
-            <option value="Coming Soon">Coming Soon</option>
-          </Select>
-          <Button type="submit">Add Movie</Button>
-        </form>
-        <MovieList>
-          {movies.map((movie) => (
-            <MovieItem key={movie.id}>
-              <span>
-                {movie.title} - {movie.status}
-              </span>
-              <Button onClick={() => handleDelete(movie.id)}>Delete</Button>
-            </MovieItem>
-          ))}
-        </MovieList>
+        <AdminDisplay>
+          <form onSubmit={handleSubmit}>
+            <Input
+              type="text"
+              name="title"
+              value={newMovie.title}
+              onChange={handleInputChange}
+              placeholder="Movie Title"
+              required
+            />
+            <Input
+              type="text"
+              name="year"
+              value={newMovie.year}
+              onChange={handleInputChange}
+              placeholder="Year Created"
+              required
+            />
+            <Input
+              type="text"
+              name="location"
+              value={newMovie.location}
+              onChange={handleInputChange}
+              placeholder="Location"
+              required
+            />
+            <Input
+              type="text"
+              name="time"
+              value={newMovie.time}
+              onChange={handleInputChange}
+              placeholder="Starting Time"
+              required
+            />
+            <Input
+              type="text"
+              name="price"
+              value={newMovie.price}
+              onChange={handleInputChange}
+              placeholder="Price"
+              required
+            />
+            <Input
+              type="text"
+              name="cast"
+              value={newMovie.cast}
+              onChange={handleInputChange}
+              placeholder="Cast"
+              required
+            />
+            <Input
+              type="text"
+              name="movieLength"
+              value={newMovie.movieLength}
+              onChange={handleInputChange}
+              placeholder="Movie Length"
+              required
+            />
+            <Select
+              name="status"
+              value={newMovie.status}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="Now Playing">Now Playing</option>
+              <option value="Coming Soon">Coming Soon</option>
+            </Select>
+            <Button type="submit">Add Movie</Button>
+          </form>
+          <MovieList>
+            {movies.map((movie) => (
+              <MovieItem key={movie.id}>
+                <span>
+                  {movie.title} - {movie.year} - {movie.location} - {movie.time}{" "}
+                  - ${movie.price} - {movie.movieLength} hr - {movie.cast} -{" "}
+                  {movie.status}
+                </span>
+                <Button onClick={() => handleDelete(movie.id)}>Delete</Button>
+              </MovieItem>
+            ))}
+          </MovieList>
+        </AdminDisplay>
       </WhiteCanvas>
     </Background>
   );
