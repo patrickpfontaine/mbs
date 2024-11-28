@@ -25,8 +25,8 @@ initializeApp({
 
 const auth = getAuth();
 
-// User id's can be found on firebase
-const makeAdmin = "kEwCflY2WTQlPoUiGRlNSDpzpEG3"; //Patrick is admin!
+//const makeAdmin = "kEwCflY2WTQlPoUiGRlNSDpzpEG3"; //Patrick is admin!
+const makeAdmin = "IBxMS2oJliXVgHHLxzcg3rVlo3p2"; //Created default admin account
 
 async function makeUserAdmin(uid) {
   try {

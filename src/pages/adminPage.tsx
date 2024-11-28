@@ -64,14 +64,12 @@ const Title = styled("h1")({
 const AdminDisplay = styled("div")({
   padding: "10px",
   borderRadius: "10px",
-  border: "1  black",
+  border: "10px  black",
   display: "flex",
   flexDirection: "row",
   gap: "10px",
   marginBottom: "20px",
   alignSelf: "flex",
-  //justifyContent: "space-between",
-  //alignItems: "center",
 });
 
 const Input = styled("input")({
@@ -83,8 +81,6 @@ const Input = styled("input")({
   gap: "10px",
   marginBottom: "20px",
   alignSelf: "flex-start",
-  //justifyContent: "space-between",
-  //alignItems: "center",
 });
 
 const Button = styled("button")({
@@ -99,16 +95,16 @@ const Button = styled("button")({
   },
 });
 
-const MovieList = styled("ul")({
-  //listStyle: "none",
-  //padding: 0,
+const MovieListBackground = styled("div")({
+  backgroundColor: "LightCoral",
+  borderRadius: "10px",
+  justifyContent: "space-between",
   width: "100%",
   alignSelf: "flex",
-  //alignItems: "center",
 });
 
-const MovieItem = styled("li")({
-  backgroundColor: "#LightCoral",
+const MovieListItem = styled("li")({
+  //backgroundColor: "Black",
   padding: "10px",
   borderRadius: "5px",
   marginBottom: "10px",
@@ -120,17 +116,15 @@ const MovieItem = styled("li")({
 
 const Select = styled("select")({
   padding: "10px",
-  borderRadius: "5px",
-  border: "1px solid black",
+
   marginBottom: "20px",
   alignSelf: "flex",
 });
 
-const ProfileButton = styled("button")({
+const ButtonWrapper = styled("button")({
   background: "none",
   border: `none`,
   cursor: "pointer",
-  //padding: `10px`,
 });
 
 interface Movie {
@@ -165,17 +159,15 @@ function AdminPage() {
 
   const getMovies = async () => {
     const moviesRef = ref(database, "movies");
-    const moviesData = await get(moviesRef);
-    if (moviesData.exists()) {
-      const movieData = moviesData.val();
-      const moviesArray = Object.entries(movieData).map(
-        ([id, data]: [string, any]) => ({
-          id,
-          ...data,
-        })
-      );
-      setMovies(moviesArray);
-    }
+    const allmovieData = await get(moviesRef);
+    const movieData = allmovieData.val();
+    const moviesArray = Object.entries(movieData).map(
+      ([id, data]: [string, any]) => ({
+        id,
+        ...data,
+      })
+    );
+    setMovies(moviesArray);
   };
 
   const handleInputChange = (
@@ -223,9 +215,9 @@ function AdminPage() {
             <MBS>MBS</MBS>
             <SloganTxt>Experience Movies Better</SloganTxt>
           </div>
-          <ProfileButton onClick={profilePage}>
+          <ButtonWrapper onClick={profilePage}>
             <img src={profileImage} alt="Profile Page" />
-          </ProfileButton>
+          </ButtonWrapper>
         </Header>
         <Title>Admin: Movie Database</Title>
         <AdminDisplay>
@@ -297,18 +289,18 @@ function AdminPage() {
             </Select>
             <Button type="submit">Add Movie</Button>
           </form>
-          <MovieList>
+          <MovieListBackground>
             {movies.map((movie) => (
-              <MovieItem key={movie.id}>
+              <MovieListItem key={movie.id}>
                 <span>
                   {movie.title} - {movie.year} - {movie.location} - {movie.time}{" "}
                   - ${movie.price} - {movie.movieLength} hr - {movie.cast} -{" "}
                   {movie.status}
                 </span>
                 <Button onClick={() => handleDelete(movie.id)}>Delete</Button>
-              </MovieItem>
+              </MovieListItem>
             ))}
-          </MovieList>
+          </MovieListBackground>
         </AdminDisplay>
       </WhiteCanvas>
     </Background>

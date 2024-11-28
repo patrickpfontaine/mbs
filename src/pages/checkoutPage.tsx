@@ -4,10 +4,6 @@ import HomeImage from "../images/HomeIcon.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { ref, get } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
-//import { useAuth } from "../firebase/userAuth";
-//import { getAuth } from "firebase/auth";
-
-//import { movies, Movie } from '../backend/2movieDatabase';
 
 const Background = styled("div")({
   background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, rgb(0, 0, 0) 100%)`,
@@ -17,7 +13,6 @@ const Background = styled("div")({
   minHeight: `100vh`,
   justifyContent: `flex-start`,
   alignItems: `center`,
-  //padding: `20px`,
   boxSizing: `border-box`,
   overflow: `hidden`,
 });
@@ -60,20 +55,45 @@ const Slogan = styled("p")({
   fontWeight: `700`,
   fontSize: `25px`,
   alignItems: `center`,
-  //alignContent: 'center',
-  marginBottom: "0",
-  //padding: '0',
+  margin: `0`,
+  padding: "0",
+});
+
+const ContentContainer = styled("div")({
+  //padding: "0",
+  backgroundColor: "blue",
+  //borderRadius: "10px",
+  width: "100%",
+
+  display: "flex",
+  flexDirection: "row",
+
+  margin: "0px",
+
+  alignSelf: "flex-start",
 });
 
 const MoviePosterContainer = styled("div")({
-  padding: "10px",
+  //padding: "0",
+  backgroundColor: "lightgray",
   borderRadius: "10px",
-  border: "1  black",
+  width: "100%",
+  maxWidth: "30%",
   display: "flex",
   flexDirection: "column",
-  gap: "10px",
-  marginBottom: "20px",
-  alignSelf: "flex-start",
+  //gap: "10px",
+  margin: "0px",
+  //marginBottom: "20px",
+  alignItems: "center",
+});
+
+const MoviePoster = styled("div")({
+  width: `60%`,
+  paddingTop: `80%`,
+  background: `linear-gradient(180deg, DarkSlateBlue 0%, CadetBlue 100%)`,
+  display: `flex`,
+  flexDirection: `column`,
+  borderRadius: `10px`,
 });
 
 const MovieTitle = styled("h2")({
@@ -110,6 +130,8 @@ const MovieInfo = styled("p")({
 const Label = styled("span")({
   fontWeight: "bold",
   marginRight: "10px",
+  //flexDirection: "column",
+  //alignSelf: "flex-start",
 });
 
 const Loading = styled("p")({
@@ -137,12 +159,10 @@ function CheckoutPage(): JSX.Element {
 
   useEffect(() => {
     const getMovie = async () => {
-      if (movieId) {
-        const movieRef = ref(database, `movies/${movieId}`);
-        const fetchedMovie = await get(movieRef);
-        const movieData = fetchedMovie.val();
-        setMovie({ id: movieId, ...movieData });
-      }
+      const movieRef = ref(database, `movies/${movieId}`);
+      const allmovieData = await get(movieRef);
+      const movieData = allmovieData.val();
+      setMovie({ id: movieId, ...movieData });
     };
     getMovie();
   }, [movieId]);
@@ -173,8 +193,12 @@ function CheckoutPage(): JSX.Element {
             <img src={HomeImage} alt="Home Page" />
           </HomeButton>
         </Header>
-        <MoviePosterContainer>
-          <MovieTitle>{movie.title}</MovieTitle>
+        <ContentContainer>
+          <MoviePosterContainer>
+            <MovieTitle>{movie.title}</MovieTitle>
+            <MoviePoster />
+            <Label>Year: {movie.year}</Label>
+          </MoviePosterContainer>
           <MovieInfoContainer>
             <MovieInfo>
               <Label>Year:</Label> {movie.year}
@@ -186,7 +210,7 @@ function CheckoutPage(): JSX.Element {
               <Label>Status:</Label> {movie.status}
             </MovieInfo>
           </MovieInfoContainer>
-        </MoviePosterContainer>
+        </ContentContainer>
       </WhiteCanvas>
     </Background>
   );

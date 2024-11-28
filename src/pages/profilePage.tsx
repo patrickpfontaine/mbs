@@ -54,40 +54,31 @@ const MBS = styled("h1")({
 });
 
 const Slogan = styled("p")({
-  color: `rgb(0, 0, 0)`,
   fontFamily: `Montserrat, sans-serif`,
   fontStyle: "italic",
   fontWeight: `700`,
   fontSize: `25px`,
-  alignItems: `center`,
-  //alignContent: 'center',
-  marginBottom: "0",
-  //padding: '0',
+  margin: "0",
 });
 
 const Title = styled("h2")({
-  color: `rgba(0, 0, 0, 1)`,
   fontFamily: `Montserrat, sans-serif`,
   fontWeight: `550`,
   fontSize: `36px`,
-  textAlign: `center`,
-  marginBottom: `20px`,
 });
 
-const HomeButton = styled("button")({
+const ButtonWrapper = styled("button")({
   background: "none",
   border: `none`,
   cursor: "pointer",
-  //padding: `10px`,
 });
 
 const ProfileInfo = styled("div")({
   backgroundColor: `lightgray`,
   borderRadius: `10px`,
   display: "flex",
-  //flexDirection: "row",
   width: "100%",
-  maxWidth: "400px",
+  maxWidth: "40%",
   padding: "20px",
 });
 
@@ -106,13 +97,12 @@ const SignoutButton = styled("button")({
   width: `100%`,
   maxWidth: "30%",
   height: `45px`,
-  color: `rgb(255, 255, 255)`,
+  color: `White`,
   fontFamily: `Inter`,
   fontWeight: `600`,
-  fontSize: `14px`,
   border: `none`,
   cursor: `pointer`,
-  marginTop: `15px`,
+  marginTop: `20px`,
 });
 
 const AdminButton = styled("button")({
@@ -124,11 +114,10 @@ const AdminButton = styled("button")({
   color: `black`,
   fontFamily: `Inter`,
   fontWeight: `600`,
-  fontSize: `14px`,
   border: `none`,
   cursor: `pointer`,
-  marginTop: `15px`,
-  marginBottom: `15px`,
+  marginTop: `20px`,
+  //marginBottom: `15px`,
 });
 
 function ProfilePage(): JSX.Element {
@@ -183,9 +172,9 @@ function ProfilePage(): JSX.Element {
             <MBS>MBS</MBS>
             <Slogan>Experience Movies Better</Slogan>
           </div>
-          <HomeButton onClick={homePage}>
+          <ButtonWrapper onClick={homePage}>
             <img src={HomeImage} alt="Home Page" />
-          </HomeButton>
+          </ButtonWrapper>
         </Header>
         <Title>Your Profile</Title>
         <ProfileInfo>

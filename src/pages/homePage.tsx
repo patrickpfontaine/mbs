@@ -5,24 +5,17 @@ import { useNavigate } from "react-router-dom";
 import { ref, get } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
 
-//import { movies, Movie } from '../backend/2movieDatabase';
-
 const Background = styled("div")({
-  background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, rgb(0, 0, 0) 100%)`,
+  background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, black 100%)`,
   display: `flex`,
   flexDirection: `column`,
   width: `100%`,
   minHeight: `100vh`,
-  justifyContent: `flex-start`,
   alignItems: `center`,
-  //padding: `20px`,
-  boxSizing: `border-box`,
-  overflow: `hidden`,
 });
 
-const WhiteCanvas = styled("main")({
-  backgroundColor: `rgba(255, 255, 255, 1)`,
-  //border: `3px solid rgba(255, 255, 255, 1)`,
+const WhiteCanvas = styled("div")({
+  backgroundColor: `White`,
   borderRadius: `20px`,
   padding: `40px`,
   width: `100%`,
@@ -31,6 +24,7 @@ const WhiteCanvas = styled("main")({
   display: `flex`,
   flexDirection: `column`,
   alignItems: `center`,
+  //top: "10px",
 });
 
 const Header = styled("header")({
@@ -51,32 +45,30 @@ const MBS = styled("h1")({
   textShadow: `4px 4px rgba(0, 0, 0, 0.25)`,
 });
 
-const SloganTxt = styled("p")({
-  color: `rgb(0, 0, 0)`,
+const Slogan = styled("p")({
   fontFamily: `Montserrat, sans-serif`,
   fontStyle: "italic",
   fontWeight: `700`,
   fontSize: `25px`,
-  alignItems: `center`,
-  //alignContent: 'center',
-  marginBottom: "0",
-  //padding: '0',
+  //padding: "0",
+  margin: "0",
+  //margin: `-7%`,
 });
 
 const Title = styled("h2")({
   color: `rgba(0, 0, 0, 1)`,
-  fontFamily: `Montserrat, sans-serif`,
+  fontFamily: `Inter`,
   fontWeight: `550`,
   fontSize: `36px`,
   textAlign: `center`,
-  marginBottom: `20px`,
+  marginBottom: `25px`,
 });
 
 const SearchBar = styled("div")({
   display: `flex`,
   width: `100%`,
   maxWidth: `500px`,
-  marginBottom: `40px`,
+  marginBottom: `35px`,
 });
 
 const SearchInput = styled("input")({
@@ -85,7 +77,7 @@ const SearchInput = styled("input")({
   fontSize: `16px`,
   border: `2px solid rgba(0, 0, 0, 0.1)`,
   borderRadius: `24px`,
-  //outline: `none`,
+
   "&:focus": {
     borderColor: `rgba(74, 50, 209, 0.5)`,
   },
@@ -99,16 +91,13 @@ const MovieFilters = styled("div")({
 });
 
 const FilterButton = styled("button")({
-  background: `none`,
   border: `none`,
-  color: `rgba(0, 0, 0, 0.7)`,
-  fontFamily: `Montserrat, sans-serif`,
-  fontWeight: `400`,
+  fontFamily: `Inter`,
   fontSize: `20px`,
+  textDecoration: "underline",
   cursor: `pointer`,
   "&:hover, &:focus": {
-    color: `rgba(74, 50, 209, 1)`,
-    textDecoration: "underline",
+    color: `rgb(74, 50, 209)`,
   },
 });
 
@@ -122,28 +111,26 @@ const MovieCardDeck = styled("div")({
 const MovieCard = styled("div")({
   display: `flex`,
   flexDirection: `column`,
-  alignItems: `center`,
-  backgroundColor: `white`,
   borderRadius: `10px`,
   overflow: `hidden`,
   boxShadow: `0px 5px 5px rgba(0, 0, 0, 1)`,
 });
 
+//Dud movie poster for simplicity
 const MoviePoster = styled("div")({
   width: `100%`,
-  paddingTop: `140%`, // 2:3 aspect ratio
+  paddingTop: `140%`,
   background: `linear-gradient(180deg, DarkSlateBlue 0%, CadetBlue 100%)`,
 });
 
 const MovieTitle = styled("h3")({
   fontFamily: `Inter, sans-serif`,
   fontSize: `24px`,
-  textAlign: `center`,
+  //textAlign: `center`,
   margin: `16px 0`,
-  //padding: `10px`,
 });
 
-const ProfileButton = styled("button")({
+const ButtonWrapper = styled("button")({
   background: "none",
   border: `none`,
   cursor: "pointer",
@@ -173,17 +160,15 @@ function HomePage(): JSX.Element {
 
   const getMovies = async () => {
     const moviesRef = ref(database, "movies");
-    const moviesData = await get(moviesRef);
-    if (moviesData.exists()) {
-      const movieData = moviesData.val();
-      const moviesArray = Object.entries(movieData).map(
-        ([id, data]: [string, any]) => ({
-          id,
-          ...data,
-        })
-      );
-      setMovies(moviesArray);
-    }
+    const allmovieData = await get(moviesRef);
+    const movieData = allmovieData.val();
+    const moviesArray = Object.entries(movieData).map(
+      ([id, data]: [string, any]) => ({
+        id,
+        ...data,
+      })
+    );
+    setMovies(moviesArray);
   };
 
   const profilePage = () => {
@@ -202,11 +187,11 @@ function HomePage(): JSX.Element {
         <Header>
           <div>
             <MBS>MBS</MBS>
-            <SloganTxt>Experience Movies Better</SloganTxt>
+            <Slogan>Experience Movies Better</Slogan>
           </div>
-          <ProfileButton onClick={profilePage}>
+          <ButtonWrapper onClick={profilePage}>
             <img src={profileImage} alt="Profile Page" />
-          </ProfileButton>
+          </ButtonWrapper>
         </Header>
         <Title>View Movies and Buy Tickets!</Title>
         <SearchBar>
@@ -222,7 +207,7 @@ function HomePage(): JSX.Element {
         </MovieFilters>
         <MovieCardDeck>
           {filteredMovies.map((movie) => (
-            <ProfileButton
+            <ButtonWrapper
               onClick={() => checkoutPage(movie.id)}
               key={movie.id}
             >
@@ -230,7 +215,7 @@ function HomePage(): JSX.Element {
                 <MoviePoster />
                 <MovieTitle>{movie.title}</MovieTitle>
               </MovieCard>
-            </ProfileButton>
+            </ButtonWrapper>
           ))}
         </MovieCardDeck>
       </WhiteCanvas>
