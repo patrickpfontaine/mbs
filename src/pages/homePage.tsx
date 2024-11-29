@@ -64,6 +64,7 @@ const Title = styled("h2")({
   marginBottom: `25px`,
 });
 
+
 const SearchBar = styled("div")({
   display: `flex`,
   width: `100%`,
@@ -154,6 +155,8 @@ function HomePage(): JSX.Element {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [filter, setFilter] = useState<string>("Now Playing");
 
+  const [search, setSearch] = useState<string>("")
+
   useEffect(() => {
     getMovies();
   }, []);
@@ -179,7 +182,12 @@ function HomePage(): JSX.Element {
     switchPage(`/checkoutPage/${movieId}`);
   };
 
-  const filteredMovies = movies.filter((movie) => movie.status === filter);
+  const filteredMovies = movies.filter((movie) => {
+    return (
+        (search !== '' && movie.title.toLowerCase().includes(search.toLowerCase())) ||
+        (search === '' && movie.status === filter)
+    );
+});
 
   return (
     <Background>
@@ -195,13 +203,24 @@ function HomePage(): JSX.Element {
         </Header>
         <Title>View Movies and Buy Tickets!</Title>
         <SearchBar>
-          <SearchInput type="text" placeholder="Search movies..." />
+          <SearchInput 
+          type="search" 
+          value = {search}
+          placeholder="Search movies..." 
+          onChange={(e) => setSearch(e.target.value)}
+          />
         </SearchBar>
         <MovieFilters>
-          <FilterButton onClick={() => setFilter("Now Playing")}>
+          <FilterButton onClick={() => [ 
+            setFilter("Now Playing"),
+            setSearch("")]
+          }>
             Now Playing
           </FilterButton>
-          <FilterButton onClick={() => setFilter("Coming Soon")}>
+          <FilterButton onClick={() => [
+            setFilter("Coming Soon"),
+            setSearch("")]
+          }>
             Coming Soon
           </FilterButton>
         </MovieFilters>
