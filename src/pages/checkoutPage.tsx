@@ -140,6 +140,54 @@ const Loading = styled("p")({
   textAlign: "center",
 });
 
+const ReviewTitle = styled("div")({
+  color: `rgb(0, 0, 0)`,
+  fontFamily: `Montserrat, sans-serif`,
+  fontWeight: `700`,
+  fontSize: `27px`,
+  alignItems: `center`,
+  margin: `0`,
+  padding: "0",
+  marginTop: `15px`,
+});
+
+const ReviewInput = styled("textarea")({
+  backgroundColor: `rgb(255, 255, 255)`,
+  border: `1px solid rgb(180, 178, 178)`,
+  boxSizing: `border-box`,
+  borderRadius: `5px`,
+  width: `80%`,
+  height: '80px',
+  //resize: none,
+});
+
+const ReviewList = styled("div")({
+  display: `grid`,
+  gridTemplateColumns: `repeat(auto-fit, minmax(300px, 1fr))`,
+  gap: `40px`,
+  width: `100%`,
+  resize: 'none',
+});
+
+const ReviewCard = styled("div")({
+  display: `flex`,
+  flexDirection: `column`,
+  borderRadius: `10px`,
+  overflow: `hidden`,
+  boxShadow: `0px 5px 5px rgba(0, 0, 0, 1)`,
+});
+
+const SubmitButton = styled("button")({
+  border: `none`,
+  fontFamily: `Inter`,
+  fontSize: `20px`,
+  textDecoration: "underline",
+  cursor: `pointer`,
+  "&:hover, &:focus": {
+    color: `rgb(74, 50, 209)`,
+  },
+});
+
 interface Movie {
   id: string;
   title: string;
@@ -150,12 +198,24 @@ interface Movie {
   cast: string;
   movieLength: string;
   status: string;
+  reviews: Review[]
+}
+
+interface Review {
+  id:       string;
+  username: string;
+  date:     string;
+  comment:  string;
 }
 
 function CheckoutPage(): JSX.Element {
   const switchPage = useNavigate();
   const { movieId } = useParams<{ movieId: string }>();
   const [movie, setMovie] = useState<Movie | null>(null);
+
+  const { reviewId } = useParams<{ reviewId: string }>();
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [userreview, setUserReview] = useState<string>('');
 
   useEffect(() => {
     const getMovie = async () => {
@@ -166,6 +226,19 @@ function CheckoutPage(): JSX.Element {
     };
     getMovie();
   }, [movieId]);
+
+  const getReviews = async () => {
+    const reviewsRef = ref(database, "movies");
+    const allreviewsData = await get(reviewsRef);
+    const reviewData = allreviewsData.val();
+    const reviewsArray = Object.entries(reviewData).map(
+      ([id, data]: [string, any]) => ({
+        id,
+        ...data,
+      })
+    );
+    setReviews(reviewsArray);
+  };
 
   const homePage = () => {
     switchPage("/homePage");
@@ -210,6 +283,20 @@ function CheckoutPage(): JSX.Element {
             </MovieInfo>
           </MovieInfoContainer>
         </ContentContainer>
+        <ReviewTitle>Reviews</ReviewTitle>
+        <ReviewInput  
+        placeholder="Write a review..." 
+        value={userreview}
+        onChange={(e) => setUserReview(e.target.value)}
+        /> 
+        <ReviewList>
+          {reviews.map((review) => (
+            <ReviewCard key={review.id}>
+              <MoviePoster />
+              <MovieTitle>{review.username}</MovieTitle>
+            </ReviewCard>
+          ))}
+        </ReviewList>
       </WhiteCanvas>
     </Background>
   );
