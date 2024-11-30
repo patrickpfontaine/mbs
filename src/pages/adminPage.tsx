@@ -136,6 +136,7 @@ interface Movie {
   cast: string;
   movieLength: string;
   status: string;
+  posterURL: string;
 }
 
 function AdminPage() {
@@ -150,6 +151,7 @@ function AdminPage() {
     cast: "",
     movieLength: "",
     status: "Now Playing",
+    posterURL: ""
   });
 
   useEffect(() => {
@@ -192,6 +194,7 @@ function AdminPage() {
       cast: "",
       movieLength: "",
       status: "Now Playing",
+      posterURL: "",
     });
     getMovies();
   };
@@ -275,6 +278,14 @@ function AdminPage() {
               value={newMovie.movieLength}
               onChange={handleInputChange}
               placeholder="Movie Length"
+              required
+            />
+            <Input
+              type="text"
+              name="posterURL"
+              value={newMovie.posterURL}
+              onChange={handleInputChange}
+              placeholder="Link to poster image"
               required
             />
             <Select

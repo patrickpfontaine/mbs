@@ -6,7 +6,7 @@ import { ref, get } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
 
 const Background = styled("div")({
-  background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, black 100%)`,
+  background: `linear-gradient(180deg, DarkSlateBlue 0%, CadetBlue 100%)`,
   display: `flex`,
   flexDirection: `column`,
   width: `100%`,
@@ -56,7 +56,7 @@ const Title = styled("h2")({
   color: `rgba(0, 0, 0, 1)`,
   fontFamily: `Inter`,
   fontWeight: `550`,
-  fontSize: `36px`,
+  fontSize: `30px`,
   textAlign: `center`,
   marginBottom: `25px`,
 });
@@ -92,7 +92,7 @@ const FilterButton = styled("button")({
   border: `none`,
   fontFamily: `Inter`,
   fontSize: `20px`,
-  textDecoration: "underline",
+  backgroundColor: `white`,
   cursor: `pointer`,
   "&:hover, &:focus": {
     color: `rgb(74, 50, 209)`,
@@ -111,18 +111,20 @@ const MovieCard = styled("div")({
   flexDirection: `column`,
   borderRadius: `10px`,
   overflow: `hidden`,
-  boxShadow: `0px 5px 5px rgba(0, 0, 0, 1)`,
+  boxShadow: `0px 5px 12px -2px rgba(0, 0, 0, .2)`,
 });
 
 //Dud movie poster for simplicity
 const MoviePoster = styled("div")({
+  position: `relative`,
   width: `100%`,
-  paddingTop: `140%`,
-  background: `linear-gradient(180deg, DarkSlateBlue 0%, CadetBlue 100%)`,
+  paddingTop: `140%`, // 2:3 aspect ratio
+  background: `linear-gradient(45deg, DarkSlateBlue 0%, CadetBlue 100%)`,
 });
 
+
 const MovieTitle = styled("h3")({
-  fontFamily: `Inter, sans-serif`,
+  fontFamily: `Inter`,
   fontSize: `24px`,
   //textAlign: `center`,
   margin: `16px 0`,
@@ -145,6 +147,7 @@ interface Movie {
   cast: string;
   movieLength: string;
   status: string;
+  posterURL: string;
 }
 
 function HomePage(): JSX.Element {
@@ -185,8 +188,10 @@ function HomePage(): JSX.Element {
         (search === '' && movie.status === filter)
     );
 });
+  const filterSelected = filter === "Now Playing"   //used for styling filter select buttons
 
   return (
+    
     <Background>
       <WhiteCanvas>
         <Header>
@@ -208,18 +213,34 @@ function HomePage(): JSX.Element {
           />
         </SearchBar>
         <MovieFilters>
-          <FilterButton onClick={() => [ 
+          <FilterButton onClick={() => [
             setFilter("Now Playing"),
             setSearch("")]
           }>
-            Now Playing
+            <text style = {{
+              textDecorationLine: filterSelected ? "underline" : "none",
+              //fontWeight: filterSelected ? "bold" : "normal",
+              color: filterSelected ? "#000000" : "#777777",
+              textAlign: "center"
+            }}>
+              Now Playing
+            </text>
           </FilterButton>
+
           <FilterButton onClick={() => [
             setFilter("Coming Soon"),
             setSearch("")]
           }>
-            Coming Soon
+            <text style = {{
+              textDecorationLine: !filterSelected ? "underline" : "none",
+              //fontWeight: !filterSelected ? "bold" : "normal",
+              color: !filterSelected ? "#000000" : "#777777",
+              textAlign: "center"
+            }}>
+              Coming Soon
+            </text>
           </FilterButton>
+
         </MovieFilters>
         <MovieCardDeck>
           {filteredMovies.map((movie) => (
@@ -228,7 +249,17 @@ function HomePage(): JSX.Element {
               key={movie.id}
             >
               <MovieCard key={movie.id}>
-                <MoviePoster />
+                  <MoviePoster>
+                  <img
+                      src = {movie.posterURL}
+                      alt = ""
+                      style = {{display: "block",
+                                position: "absolute",
+                                bottom: "0",
+                                width: "100%",
+                                paddingTop: "0%"}}
+                    />  
+                  </MoviePoster>
                 <MovieTitle>{movie.title}</MovieTitle>
               </MovieCard>
             </ButtonWrapper>
