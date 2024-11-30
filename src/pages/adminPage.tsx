@@ -116,7 +116,6 @@ const MovieListItem = styled("li")({
 
 const Select = styled("select")({
   padding: "10px",
-
   marginBottom: "20px",
   alignSelf: "flex",
 });

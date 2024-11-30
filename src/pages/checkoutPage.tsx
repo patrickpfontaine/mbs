@@ -19,7 +19,6 @@ const Background = styled("div")({
 
 const WhiteCanvas = styled("main")({
   backgroundColor: `rgba(255, 255, 255, 1)`,
-  //border: `3px solid rgba(255, 255, 255, 1)`,
   borderRadius: `20px`,
   padding: `40px`,
   width: `100%`,
@@ -76,9 +75,9 @@ const ContentContainer = styled("div")({
 const MoviePosterContainer = styled("div")({
   //padding: "0",
   backgroundColor: "lightgray",
-  borderRadius: "10px",
+  //borderRadius: "10px",
   width: "100%",
-  maxWidth: "30%",
+  maxWidth: "33%",
   display: "flex",
   flexDirection: "column",
   //gap: "10px",
@@ -103,28 +102,22 @@ const MovieTitle = styled("h2")({
   marginBottom: `20px`,
 });
 
-const HomeButton = styled("button")({
-  background: "none",
-  border: `none`,
-  cursor: "pointer",
-  //padding: `10px`,
-});
-
 const MovieInfoContainer = styled("div")({
   display: "flex",
-  flexDirection: "column",
-  alignSelf: "flex-start",
+  flexDirection: "row",
+  padding: "10px",
+  //alignSelf: "flex-start",
   //alignItems: "center",
   gap: "20px",
   width: "100%",
-  maxWidth: "600px",
+  maxWidth: "33%",
 });
 
 const MovieInfo = styled("p")({
   fontFamily: "Montserrat, sans-serif",
   fontSize: "18px",
   flexDirection: "row",
-  //textAlign: "center",
+  textAlign: "center",
 });
 
 const Label = styled("span")({
@@ -132,6 +125,13 @@ const Label = styled("span")({
   marginRight: "10px",
   //flexDirection: "column",
   //alignSelf: "flex-start",
+});
+
+const HomeButton = styled("button")({
+  background: "none",
+  border: `none`,
+  cursor: "pointer",
+  //padding: `10px`,
 });
 
 const Loading = styled("p")({
@@ -197,7 +197,6 @@ function CheckoutPage(): JSX.Element {
           <MoviePosterContainer>
             <MovieTitle>{movie.title}</MovieTitle>
             <MoviePoster />
-            <Label>Year: {movie.year}</Label>
           </MoviePosterContainer>
           <MovieInfoContainer>
             <MovieInfo>

@@ -24,7 +24,6 @@ const WhiteCanvas = styled("div")({
   display: `flex`,
   flexDirection: `column`,
   alignItems: `center`,
-  //top: "10px",
 });
 
 const Header = styled("header")({
@@ -50,9 +49,7 @@ const Slogan = styled("p")({
   fontStyle: "italic",
   fontWeight: `700`,
   fontSize: `25px`,
-  //padding: "0",
   margin: "0",
-  //margin: `-7%`,
 });
 
 const Title = styled("h2")({
