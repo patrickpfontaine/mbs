@@ -101,7 +101,7 @@ const FilterButton = styled("button")({
 
 const MovieCardDeck = styled("div")({
   display: `grid`,
-  gridTemplateColumns: `repeat(auto-fit, minmax(300px, 1fr))`,
+  gridTemplateColumns: `repeat(3, minmax(300px, 1fr))`,
   gap: `40px`,
   width: `100%`,
 });
@@ -188,7 +188,6 @@ function HomePage(): JSX.Element {
         (search === '' && movie.status === filter)
     );
 });
-  const filterSelected = filter === "Now Playing"   //used for styling filter select buttons
 
   return (
     
@@ -203,24 +202,26 @@ function HomePage(): JSX.Element {
             <img src={profileImage} alt="Profile Page" />
           </ButtonWrapper>
         </Header>
+        
         <Title>View Movies and Buy Tickets!</Title>
+
         <SearchBar>
           <SearchInput 
           type="search" 
           value = {search}
           placeholder="Search movies..." 
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); e.target.value !== '' ? setFilter('') : setFilter("Now Playing")}}
           />
         </SearchBar>
+
         <MovieFilters>
           <FilterButton onClick={() => [
             setFilter("Now Playing"),
             setSearch("")]
           }>
             <text style = {{
-              textDecorationLine: filterSelected ? "underline" : "none",
-              //fontWeight: filterSelected ? "bold" : "normal",
-              color: filterSelected ? "#000000" : "#777777",
+              textDecorationLine: filter === "Now Playing" ? "underline" : "none",
+              color: filter === "Now Playing" ? "#000000" : "#777777",
               textAlign: "center"
             }}>
               Now Playing
@@ -232,16 +233,15 @@ function HomePage(): JSX.Element {
             setSearch("")]
           }>
             <text style = {{
-              textDecorationLine: !filterSelected ? "underline" : "none",
-              //fontWeight: !filterSelected ? "bold" : "normal",
-              color: !filterSelected ? "#000000" : "#777777",
+              textDecorationLine: filter === "Coming Soon" ? "underline" : "none",
+              color: filter === "Coming Soon" ? "#000000" : "#777777",
               textAlign: "center"
             }}>
               Coming Soon
             </text>
           </FilterButton>
-
         </MovieFilters>
+
         <MovieCardDeck>
           {filteredMovies.map((movie) => (
             <ButtonWrapper
