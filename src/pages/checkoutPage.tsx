@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
-import HomeImage from "../images/HomeIcon.png";
 import { useNavigate, useParams } from "react-router-dom";
-import { ref, get } from "firebase/database";
+import { ref, get, push } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
+import ReactStars from "react-stars";
 
 const Background = styled("div")({
   background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, rgb(0, 0, 0) 100%)`,
@@ -29,226 +29,162 @@ const WhiteCanvas = styled("main")({
   alignItems: `center`,
 });
 
-const Header = styled("header")({
-  width: `100%`,
-  display: `flex`,
-  justifyContent: `space-between`,
-  alignItems: `center`,
-  marginBottom: `20px`,
-});
-
-const MBS = styled("h1")({
-  color: `rgba(74, 50, 209, 1)`,
-  fontFamily: `Montserrat, sans-serif`,
-  fontWeight: `700`,
-  fontSize: `96px`,
-  margin: `0`,
-  padding: "0",
-  textShadow: `4px 4px rgba(0, 0, 0, 0.25)`,
-});
-
-const Slogan = styled("p")({
-  color: `rgb(0, 0, 0)`,
-  fontFamily: `Montserrat, sans-serif`,
-  fontStyle: "italic",
-  fontWeight: `700`,
-  fontSize: `25px`,
-  alignItems: `center`,
-  margin: `0`,
-  padding: "0",
-});
-
-const ContentContainer = styled("div")({
-  //padding: "0",
-  backgroundColor: "blue",
-  //borderRadius: "10px",
+const MoviePoster = styled("img")({
+  borderRadius: "10px",
   width: "100%",
-
-  display: "flex",
-  flexDirection: "row",
-
-  margin: "0px",
-
-  alignSelf: "flex-start",
+  maxWidth: "300px",
 });
 
-const MoviePosterContainer = styled("div")({
-  //padding: "0",
-  backgroundColor: "lightgray",
-  //borderRadius: "10px",
-  width: "100%",
-  maxWidth: "33%",
-  display: "flex",
-  flexDirection: "column",
-  //gap: "10px",
-  margin: "0px",
-  //marginBottom: "20px",
-  alignItems: "center",
-});
-
-const MoviePoster = styled("div")({
-  width: `60%`,
-  paddingTop: `80%`,
-  background: `linear-gradient(180deg, DarkSlateBlue 0%, CadetBlue 100%)`,
-  display: `flex`,
-  flexDirection: `column`,
-  borderRadius: `10px`,
-});
-
-const MovieTitle = styled("h2")({
-  fontFamily: `Montserrat, sans-serif`,
-  fontWeight: `550`,
-  fontSize: `36px`,
-  marginBottom: `20px`,
-});
-
-const MovieInfoContainer = styled("div")({
-  display: "flex",
-  flexDirection: "row",
-  padding: "10px",
-  //alignSelf: "flex-start",
-  //alignItems: "center",
-  gap: "20px",
-  width: "100%",
-  maxWidth: "33%",
+const MovieTitle = styled("h1")({
+  fontFamily: "Montserrat, sans-serif",
+  fontSize: "36px",
+  fontWeight: "bold",
+  marginBottom: "20px",
 });
 
 const MovieInfo = styled("p")({
   fontFamily: "Montserrat, sans-serif",
   fontSize: "18px",
-  flexDirection: "row",
   textAlign: "center",
+  marginBottom: "20px",
 });
 
-const Label = styled("span")({
-  fontWeight: "bold",
-  marginRight: "10px",
-  //flexDirection: "column",
-  //alignSelf: "flex-start",
+const ActionContainer = styled("div")({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  width: "100%",
+  maxWidth: "800px",
+  marginTop: "40px",
 });
 
-const HomeButton = styled("button")({
-  background: "none",
-  border: `none`,
-  cursor: "pointer",
-  //padding: `10px`,
-});
-
-const Loading = styled("p")({
-  fontFamily: "Montserrat, sans-serif",
-  fontSize: "36px",
-  textAlign: "center",
-});
-
-const ReviewTitle = styled("div")({
-  color: `rgb(0, 0, 0)`,
-  fontFamily: `Montserrat, sans-serif`,
-  fontWeight: `700`,
-  fontSize: `27px`,
-  alignItems: `center`,
-  margin: `0`,
-  padding: "0",
-  marginTop: `15px`,
+const ReviewSection = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: "10px", // Adjust spacing between elements
+  width: "45%",
 });
 
 const ReviewInput = styled("textarea")({
-  backgroundColor: `rgb(255, 255, 255)`,
-  border: `1px solid rgb(180, 178, 178)`,
-  boxSizing: `border-box`,
-  borderRadius: `5px`,
-  width: `80%`,
-  height: '80px',
-  //resize: none,
+  width: "100%",
+  height: "80px",
+  borderRadius: "5px",
+  border: "1px solid #ccc",
+  padding: "10px",
+  fontFamily: "Montserrat, sans-serif",
+  fontSize: "16px",
 });
 
-const ReviewList = styled("div")({
-  display: `grid`,
-  gridTemplateColumns: `repeat(auto-fit, minmax(300px, 1fr))`,
-  gap: `40px`,
-  width: `100%`,
-  resize: 'none',
-});
-
-const ReviewCard = styled("div")({
-  display: `flex`,
-  flexDirection: `column`,
-  borderRadius: `10px`,
-  overflow: `hidden`,
-  boxShadow: `0px 5px 5px rgba(0, 0, 0, 1)`,
-});
-
-const SubmitButton = styled("button")({
-  border: `none`,
-  fontFamily: `Inter`,
-  fontSize: `20px`,
-  textDecoration: "underline",
-  cursor: `pointer`,
-  "&:hover, &:focus": {
-    color: `rgb(74, 50, 209)`,
+const Button = styled("button")({
+  padding: "10px 20px",
+  fontSize: "16px",
+  color: "#fff",
+  backgroundColor: "rgba(74, 50, 209, 1)",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
+  alignSelf: "center", // Ensure button aligns properly
+  "&:hover": {
+    backgroundColor: "rgba(74, 50, 209, 0.8)",
   },
 });
 
-interface Movie {
-  id: string;
-  title: string;
-  year: string;
-  location: string;
-  time: string;
-  price: string;
-  cast: string;
-  movieLength: string;
-  status: string;
-  reviews: Review[]
-}
+const ReviewsSection = styled("div")({
+  width: "100%",
+  marginTop: "30px",
+});
 
-interface Review {
-  id:       string;
-  username: string;
-  date:     string;
-  comment:  string;
-}
+const ReviewCard = styled("div")({
+  backgroundColor: "#f9f9f9",
+  padding: "20px",
+  marginBottom: "15px",
+  borderRadius: "10px",
+  boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+});
+
+const ReviewRating = styled("div")({
+  display: "flex",
+  alignItems: "center",
+});
+
+const ReviewText = styled("p")({
+  fontFamily: "Montserrat, sans-serif",
+  fontSize: "16px",
+  margin: "10px 0",
+});
 
 function CheckoutPage(): JSX.Element {
-  const switchPage = useNavigate();
+  const navigate = useNavigate();
   const { movieId } = useParams<{ movieId: string }>();
-  const [movie, setMovie] = useState<Movie | null>(null);
-
-  const { reviewId } = useParams<{ reviewId: string }>();
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [userreview, setUserReview] = useState<string>('');
+  const [movie, setMovie] = useState<any>(null);
+  const [rating, setRating] = useState<number>(0);
+  const [userReview, setUserReview] = useState<string>("");
+  const [reviews, setReviews] = useState<any[]>([]);
 
   useEffect(() => {
-    const getMovie = async () => {
+    const fetchMovie = async () => {
       const movieRef = ref(database, `movies/${movieId}`);
-      const allmovieData = await get(movieRef);
-      const movieData = allmovieData.val();
-      setMovie({ id: movieId, ...movieData });
+      const movieSnapshot = await get(movieRef);
+      setMovie(movieSnapshot.val());
     };
-    getMovie();
+
+    const fetchReviews = async () => {
+      const reviewsRef = ref(database, `movies/${movieId}/reviews`);
+      const reviewsSnapshot = await get(reviewsRef);
+      const reviewsData = reviewsSnapshot.val();
+
+      if (reviewsData) {
+        const reviewsArray = Object.entries(reviewsData).map(
+          ([key, value]) => ({
+            id: key,
+            ...(value as Record<string, any>),
+          })
+        );
+        setReviews(reviewsArray);
+      }
+    };
+
+    fetchMovie();
+    fetchReviews();
   }, [movieId]);
 
-  const getReviews = async () => {
-    const reviewsRef = ref(database, "movies");
-    const allreviewsData = await get(reviewsRef);
-    const reviewData = allreviewsData.val();
-    const reviewsArray = Object.entries(reviewData).map(
-      ([id, data]: [string, any]) => ({
-        id,
-        ...data,
-      })
-    );
-    setReviews(reviewsArray);
+  const handlePurchase = () => {
+    navigate(`/payment`);
   };
 
-  const homePage = () => {
-    switchPage("/homePage");
+  const handleAddReview = async () => {
+    if (!userReview || rating === 0) {
+      alert("Please add a review and select a star rating.");
+      return;
+    }
+    const reviewsRef = ref(database, `movies/${movieId}/reviews`);
+    await push(reviewsRef, {
+      rating,
+      review: userReview,
+      date: new Date().toISOString(),
+    });
+    alert("Review added successfully!");
+    setUserReview("");
+    setRating(0);
+
+    // Refresh reviews after adding
+    const reviewsSnapshot = await get(reviewsRef);
+    const reviewsData = reviewsSnapshot.val();
+    if (reviewsData) {
+      const reviewsArray = Object.entries(reviewsData).map(([key, value]) => ({
+        id: key,
+        ...(value as Record<string, any>),
+      }));
+      setReviews(reviewsArray);
+    }
   };
 
   if (!movie) {
     return (
       <Background>
         <WhiteCanvas>
-          <Loading>{"Loading..."}</Loading>
+          <p>Loading...</p>
         </WhiteCanvas>
       </Background>
     );
@@ -257,46 +193,57 @@ function CheckoutPage(): JSX.Element {
   return (
     <Background>
       <WhiteCanvas>
-        <Header>
-          <div>
-            <MBS>MBS</MBS>
-            <Slogan>Experience Movies Better</Slogan>
-          </div>
-          <HomeButton onClick={homePage}>
-            <img src={HomeImage} alt="Home Page" />
-          </HomeButton>
-        </Header>
-        <ContentContainer>
-          <MoviePosterContainer>
-            <MovieTitle>{movie.title}</MovieTitle>
-            <MoviePoster />
-          </MoviePosterContainer>
-          <MovieInfoContainer>
-            <MovieInfo>
-              <Label>Year:</Label> {movie.year}
-              <Label>Location:</Label> {movie.location}
-              <Label>Time:</Label> {movie.time}
-              <Label>Price:</Label> ${movie.price}
-              <Label>Cast:</Label> {movie.cast}
-              <Label>Movie Length:</Label> {movie.movieLength} hours
-              <Label>Status:</Label> {movie.status}
-            </MovieInfo>
-          </MovieInfoContainer>
-        </ContentContainer>
-        <ReviewTitle>Reviews</ReviewTitle>
-        <ReviewInput  
-        placeholder="Write a review..." 
-        value={userreview}
-        onChange={(e) => setUserReview(e.target.value)}
-        /> 
-        <ReviewList>
-          {reviews.map((review) => (
-            <ReviewCard key={review.id}>
-              <MoviePoster />
-              <MovieTitle>{review.username}</MovieTitle>
-            </ReviewCard>
-          ))}
-        </ReviewList>
+        <MovieTitle>{movie.title}</MovieTitle>
+        <MoviePoster src={movie.poster} alt={`${movie.title} poster`} />
+        <MovieInfo>
+          Year: {movie.year} | Location: {movie.location} | Time: {movie.time} |
+          Price: ${movie.price} | Cast: {movie.cast}
+        </MovieInfo>
+
+        <ActionContainer>
+          {/* Left Section: Add Review */}
+          <ReviewSection>
+            <ReviewInput
+              placeholder="Write your review..."
+              value={userReview}
+              onChange={(e) => setUserReview(e.target.value)}
+            />
+            <ReactStars
+              count={5}
+              value={rating}
+              onChange={(newRating: number) => setRating(newRating)}
+              size={24}
+              color2={"#ffd700"}
+            />
+            <Button onClick={handleAddReview}>Add Review</Button>
+          </ReviewSection>
+
+          {/* Right Section: Purchase Ticket */}
+          <ReviewSection>
+            <Button onClick={handlePurchase}>Purchase Ticket</Button>
+          </ReviewSection>
+        </ActionContainer>
+
+        <ReviewsSection>
+          <h2>Reviews</h2>
+          {reviews.length > 0 ? (
+            reviews.map((review) => (
+              <ReviewCard key={review.id}>
+                <ReviewRating>
+                  <ReactStars
+                    count={5}
+                    value={review.rating}
+                    size={20}
+                    color2={"#ffd700"}
+                  />
+                </ReviewRating>
+                <ReviewText>{review.review}</ReviewText>
+              </ReviewCard>
+            ))
+          ) : (
+            <p>No reviews yet. Be the first to add one!</p>
+          )}
+        </ReviewsSection>
       </WhiteCanvas>
     </Background>
   );

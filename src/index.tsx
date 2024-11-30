@@ -12,7 +12,8 @@ import SignUp from "./pages/signUp";
 import HomePage from "./pages/homePage";
 import ProfilePage from "./pages/profilePage";
 import AdminPage from "./pages/adminPage";
-import CheckoutPage from "./pages/checkoutPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import PaymentPage from "./pages/PaymentPage"; // Import PaymentPage
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(
@@ -29,6 +30,7 @@ root.render(
         <Route path="/profilePage" element={<ProfilePage />} />
         <Route path="/adminPage" element={<AdminPage />} />
         <Route path="/checkoutPage/:movieId" element={<CheckoutPage />} />
+        <Route path="/payment" element={<PaymentPage />} /> {/* Added Route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
