@@ -14,6 +14,8 @@ import ProfilePage from "./pages/profilePage";
 import AdminPage from "./pages/adminPage";
 import CheckoutPage from "./pages/checkoutPage";
 import PaymentPage from "./pages/PaymentPage";
+import TicketPage from "./pages/TicketPage";
+import QrcodePage from "./pages/QrcodePage";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(
@@ -31,6 +33,8 @@ root.render(
         <Route path="/adminPage" element={<AdminPage />} />
         <Route path="/checkoutPage/:movieId" element={<CheckoutPage />} />
         <Route path="/PaymentPage" element={<PaymentPage />} />
+        <Route path="/ticket" element={<TicketPage />} />
+        <Route path="/valid-ticket" element={<QrcodePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
@@ -41,9 +45,3 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
-
-/*root.render(
-  <React.StrictMode>
-    <SignIn />
-  </React.StrictMode>
-);*/

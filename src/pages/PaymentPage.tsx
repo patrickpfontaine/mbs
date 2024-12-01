@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 
 const PaymentContainer = styled("div")({
   background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, black 100%)`,
@@ -67,6 +68,7 @@ const PaymentPage: React.FC = () => {
     cvv: "",
     paypalEmail: "",
   });
+  const navigate = useNavigate();
 
   const handleBillingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -85,7 +87,19 @@ const PaymentPage: React.FC = () => {
   };
 
   const handlePayment = () => {
+    if (!billingInfo.name) {
+      alert("Please fill out your billing information.");
+      return;
+    }
     alert(`Payment successful using ${paymentMethod}`);
+    navigate("/ticket", {
+      state: {
+        name: billingInfo.name,
+        movieTitle: "Inception", // Replace with dynamic movie title
+        theaterLocation: "Downtown Cinema, TX", // Replace with dynamic location
+        showTime: "7:00 PM", // Replace with dynamic time
+      },
+    });
   };
 
   return (
@@ -154,7 +168,7 @@ const PaymentPage: React.FC = () => {
                   name="paypalPassword"
                   value={paymentInfo.paypalEmail}
                   onChange={handlePaymentChange}
-                  placeholder="Paypal Password"
+                  placeholder="PayPal Password"
                   required
                 />
               </>
