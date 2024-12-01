@@ -8,6 +8,7 @@ declare module 'react-stars' {
       size?: number;
       color1?: string;
       color2?: string;
+      edit?: boolean;
   }
 
   export default class ReactStars extends Component<ReactStarsProps> {}

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { useNavigate, useParams } from "react-router-dom";
-import { ref, get, push } from "firebase/database";
+import HomeImage from "../images/HomeIcon.png";
+import { useNavigate, useParams} from "react-router-dom";
+import { ref, get, push, remove, update, serverTimestamp, orderByChild, query   } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
+import { useAuth } from "../firebase/userAuth";
+
 import ReactStars from "react-stars";
 
 const Background = styled("div")({
@@ -49,6 +52,27 @@ const MovieInfo = styled("p")({
   marginBottom: "20px",
 });
 
+const Label = styled("span")({
+  fontWeight: "bold",
+  marginRight: "10px",
+  //flexDirection: "column",
+  //alignSelf: "flex-start",
+});
+
+const SmallLabel = styled("span")({
+  marginRight: "10px",
+  //flexDirection: "column",
+  //alignSelf: "flex-start",
+});
+
+const HomeButton = styled("button")({
+  background: "none",
+  border: `none`,
+  cursor: "pointer",
+  textAlign: "right",
+  //padding: `10px`,
+});
+
 const ActionContainer = styled("div")({
   display: "flex",
   justifyContent: "space-between",
@@ -67,14 +91,17 @@ const ReviewSection = styled("div")({
 });
 
 const ReviewInput = styled("textarea")({
-  width: "100%",
-  height: "80px",
-  borderRadius: "5px",
-  border: "1px solid #ccc",
-  padding: "10px",
-  fontFamily: "Montserrat, sans-serif",
-  fontSize: "16px",
+  backgroundColor: `rgb(255, 255, 255)`,
+  border: `1px solid rgb(180, 178, 178)`,
+  boxSizing: `border-box`,
+  borderRadius: `5px`,
+  width: `80%`,
+  height: '80px',
+  resize: 'none',
+  spellcheck: 'true',
+  wrap: 'hard',
 });
+
 
 const Button = styled("button")({
   padding: "10px 20px",
@@ -112,15 +139,53 @@ const ReviewText = styled("p")({
   fontFamily: "Montserrat, sans-serif",
   fontSize: "16px",
   margin: "10px 0",
+  wrap: 'hard',
+  overflowWrap: "anywhere",
 });
+const ReviewList = styled("div")({
+  display: `list`,
+  gridTemplateColumns: `repeat(auto-fit, minmax(300px, 1fr))`,
+  gap: `40px`,
+  width: `100%`,
+  resize: 'none',
+});
+
+const XButton = styled("button")({
+  border: `none`,
+  fontSize: `18px`,
+  cursor: `pointer`,
+  "&:hover, &:focus": {
+    color: `rgb(74, 50, 209)`,
+  },
+});
+
+
+
+interface Review {
+  username: string;
+  date:     string;
+  comment:  string;
+  createdAt: object;
+  rating: number;
+}
 
 function CheckoutPage(): JSX.Element {
   const navigate = useNavigate();
   const { movieId } = useParams<{ movieId: string }>();
   const [movie, setMovie] = useState<any>(null);
+
   const [rating, setRating] = useState<number>(0);
-  const [userReview, setUserReview] = useState<string>("");
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [userreview, setUserReview] = useState<string>('');
+  const [newReview, setNewReview] = useState({
+    date: new Date().toLocaleDateString(),
+    comment: userreview,
+  });
+  const [updateReviews, setupdateReviews] = useState(false);  
+
+  const [userData, setUserData] = useState<any>(null);
+  const { user, logOut } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -130,54 +195,93 @@ function CheckoutPage(): JSX.Element {
     };
 
     const fetchReviews = async () => {
-      const reviewsRef = ref(database, `movies/${movieId}/reviews`);
-      const reviewsSnapshot = await get(reviewsRef);
-      const reviewsData = reviewsSnapshot.val();
+      try {
+        const reviewsRef = ref(database, `movies/${movieId}/reviews`);
+        const entriesQuery = query(reviewsRef, orderByChild("createdAt"));
+        const snapshot = await get(entriesQuery);
+        const entries : Review[] = [];
+        snapshot.forEach((childSnapshot : any) => {
+          entries.push({ username: childSnapshot.key, ...childSnapshot.val() 
+          }); 
+        });
 
-      if (reviewsData) {
-        const reviewsArray = Object.entries(reviewsData).map(
-          ([key, value]) => ({
-            id: key,
-            ...(value as Record<string, any>),
+        const currentItems: Review[] = entries || [];
+        const reviewArray = Object.entries(currentItems).reverse().map(
+          ([username, data]: [string, any]) => ({
+            username,
+            ...data,
           })
         );
-        setReviews(reviewsArray);
+        console.log(Object.values(reviewArray));
+        setReviews(Object.values(reviewArray));
+      } catch (e) { 
+        console.error("Error updating entry: ", e);
+      }
+    };
+
+    const getUserData = async () => {
+      if (user) {
+        const userRef = ref(database, "users/" + user.uid);
+        const data = await get(userRef);
+        setUserData(data.val());
+          //checks if user is Admin
+          const token = await user.getIdTokenResult();
+          setIsAdmin(!!token.claims.admin);
+      } else {
+        console.log("No user found");
       }
     };
 
     fetchMovie();
     fetchReviews();
-  }, [movieId]);
+    getUserData();
+    setupdateReviews(false)
+
+  }, [movieId, user, updateReviews]);
 
   const handlePurchase = () => {
     navigate(`/payment`);
   };
 
   const handleAddReview = async () => {
-    if (!userReview || rating === 0) {
+    if (!userreview || rating === 0) {
       alert("Please add a review and select a star rating.");
       return;
     }
-    const reviewsRef = ref(database, `movies/${movieId}/reviews`);
-    await push(reviewsRef, {
-      rating,
-      review: userReview,
-      date: new Date().toISOString(),
-    });
-    alert("Review added successfully!");
+    const reviewsRef = ref(database, `movies/${movieId}/reviews/${userData.name}`);
+
+    try {
+      await update(ref(database, `movies/${movieId}/reviews/${userData.name}`), { 
+        comment: newReview.comment,
+        date: newReview.date,
+        createdAt: serverTimestamp(),
+        rating: rating,
+      });
+      console.log("Item appended to array successfully");
+      //window.location.reload();
+    } catch (e) { 
+      console.error("Error updating entry: ", e);
+    }
+    
     setUserReview("");
     setRating(0);
+    setupdateReviews(true)
+  };
 
-    // Refresh reviews after adding
-    const reviewsSnapshot = await get(reviewsRef);
-    const reviewsData = reviewsSnapshot.val();
-    if (reviewsData) {
-      const reviewsArray = Object.entries(reviewsData).map(([key, value]) => ({
-        id: key,
-        ...(value as Record<string, any>),
-      }));
-      setReviews(reviewsArray);
+  const handleDelete = async (username : string) => {
+    const reviewsRef = ref(database, `movies/${movieId}/reviews/${username}`);
+    try {
+      await remove(reviewsRef);
+      setupdateReviews(true)
+      console.log("Item removed from array successfully");
+      //window.location.reload();
+    } catch (e) { 
+      console.error("Error updating entry: ", e);
     }
+  };
+  
+  const homePage = () => {
+    navigate("/homePage");
   };
 
   if (!movie) {
@@ -193,6 +297,9 @@ function CheckoutPage(): JSX.Element {
   return (
     <Background>
       <WhiteCanvas>
+        <HomeButton onClick={homePage}>
+            <img src={HomeImage} alt="Home Page" />
+        </HomeButton>
         <MovieTitle>{movie.title}</MovieTitle>
         <MoviePoster src={movie.poster} alt={`${movie.title} poster`} />
         <MovieInfo>
@@ -205,9 +312,18 @@ function CheckoutPage(): JSX.Element {
           <ReviewSection>
             <ReviewInput
               placeholder="Write your review..."
-              value={userReview}
-              onChange={(e) => setUserReview(e.target.value)}
+              value={userreview}
+              onChange={(e) => [
+                setUserReview(e.target.value.slice(0,500)),
+                setNewReview({    
+                  date: new Date().toLocaleDateString(),
+                  comment: e.target.value.slice(0,500)}),
+              ]}
             />
+            <SmallLabel>
+              {userreview.length}
+              /500 letters
+            </SmallLabel> 
             <ReactStars
               count={5}
               value={rating}
@@ -227,19 +343,25 @@ function CheckoutPage(): JSX.Element {
         <ReviewsSection>
           <h2>Reviews</h2>
           {reviews.length > 0 ? (
-            reviews.map((review) => (
-              <ReviewCard key={review.id}>
-                <ReviewRating>
-                  <ReactStars
-                    count={5}
-                    value={review.rating}
-                    size={20}
-                    color2={"#ffd700"}
-                  />
-                </ReviewRating>
-                <ReviewText>{review.review}</ReviewText>
+            <ReviewList>
+            {Object.values(reviews).map((review, index) => (
+              
+              <ReviewCard key={index}>
+                <Label>{review.username} • {review.date} </Label>
+                {(isAdmin || userData && review.username.toString() === userData.name.toString()) && 
+                <XButton onClick={() => handleDelete(review.username)}>X</XButton>
+                }
+                <ReactStars
+                  count={5}
+                  value={review.rating}
+                  size={24}
+                  color2={"#ffd700"}
+                  edit = {false}
+                />
+                <ReviewText>{review.comment}</ReviewText>
               </ReviewCard>
-            ))
+            ))}
+          </ReviewList>
           ) : (
             <p>No reviews yet. Be the first to add one!</p>
           )}

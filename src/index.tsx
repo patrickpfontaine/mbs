@@ -12,9 +12,10 @@ import SignUp from "./pages/signUp";
 import HomePage from "./pages/homePage";
 import ProfilePage from "./pages/profilePage";
 import AdminPage from "./pages/adminPage";
-import CheckoutPage from "./pages/CheckoutPage";
+import CheckoutPage from "./pages/checkoutPage";
 import PaymentPage from "./pages/PaymentPage"; // Import PaymentPage
 import reportWebVitals from "./reportWebVitals";
+
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
