@@ -61,7 +61,6 @@ const Title = styled("h2")({
   marginBottom: `25px`,
 });
 
-
 const SearchBar = styled("div")({
   display: `flex`,
   width: `100%`,
@@ -101,7 +100,8 @@ const FilterButton = styled("button")({
 
 const MovieCardDeck = styled("div")({
   display: `grid`,
-  gridTemplateColumns: `repeat(auto-fit, minmax(300px, 1fr))`,
+  justifyContent: `center`,
+  gridTemplateColumns: `repeat(auto-fit, minmax(20%, 20%))`,
   gap: `40px`,
   width: `100%`,
 });
@@ -111,6 +111,8 @@ const MovieCard = styled("div")({
   flexDirection: `column`,
   borderRadius: `10px`,
   overflow: `hidden`,
+  //width: "25%",
+  //maxWidth: "25%",
   boxShadow: `0px 5px 5px rgba(0, 0, 0, 1)`,
 });
 
@@ -152,7 +154,7 @@ function HomePage(): JSX.Element {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [filter, setFilter] = useState<string>("Now Playing");
 
-  const [search, setSearch] = useState<string>("")
+  const [search, setSearch] = useState<string>("");
 
   useEffect(() => {
     getMovies();
@@ -181,10 +183,11 @@ function HomePage(): JSX.Element {
 
   const filteredMovies = movies.filter((movie) => {
     return (
-        (search !== '' && movie.title.toLowerCase().includes(search.toLowerCase())) ||
-        (search === '' && movie.status === filter)
+      (search !== "" &&
+        movie.title.toLowerCase().includes(search.toLowerCase())) ||
+      (search === "" && movie.status === filter)
     );
-});
+  });
 
   return (
     <Background>
@@ -200,24 +203,22 @@ function HomePage(): JSX.Element {
         </Header>
         <Title>View Movies and Buy Tickets!</Title>
         <SearchBar>
-          <SearchInput 
-          type="search" 
-          value = {search}
-          placeholder="Search movies..." 
-          onChange={(e) => setSearch(e.target.value)}
+          <SearchInput
+            type="search"
+            value={search}
+            placeholder="Search movies..."
+            onChange={(e) => setSearch(e.target.value)}
           />
         </SearchBar>
         <MovieFilters>
-          <FilterButton onClick={() => [ 
-            setFilter("Now Playing"),
-            setSearch("")]
-          }>
+          <FilterButton
+            onClick={() => [setFilter("Now Playing"), setSearch("")]}
+          >
             Now Playing
           </FilterButton>
-          <FilterButton onClick={() => [
-            setFilter("Coming Soon"),
-            setSearch("")]
-          }>
+          <FilterButton
+            onClick={() => [setFilter("Coming Soon"), setSearch("")]}
+          >
             Coming Soon
           </FilterButton>
         </MovieFilters>

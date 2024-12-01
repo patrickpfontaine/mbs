@@ -126,30 +126,33 @@ const ButtonWrapper = styled("button")({
   cursor: "pointer",
 });
 
+interface MovieShowing {
+  location: string;
+  times: string[];
+}
+
 interface Movie {
   id: string;
   title: string;
   year: string;
-  location: string;
-  time: string;
   price: string;
   cast: string;
   movieLength: string;
   status: string;
+  showings: MovieShowing[];
 }
 
 function AdminPage() {
   const switchPage = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [newMovie, setNewMovie] = useState({
+  const [newMovie, setNewMovie] = useState<Omit<Movie, "id">>({
     title: "",
     year: "",
-    location: "",
-    time: "",
     price: "",
     cast: "",
     movieLength: "",
     status: "Now Playing",
+    showings: [{ location: "", times: [""] }],
   });
 
   useEffect(() => {
@@ -160,13 +163,17 @@ function AdminPage() {
     const moviesRef = ref(database, "movies");
     const allmovieData = await get(moviesRef);
     const movieData = allmovieData.val();
-    const moviesArray = Object.entries(movieData).map(
-      ([id, data]: [string, any]) => ({
-        id,
-        ...data,
-      })
-    );
-    setMovies(moviesArray);
+    if (movieData) {
+      const moviesArray = Object.entries(movieData).map(
+        ([id, data]: [string, any]) => ({
+          id,
+          ...data,
+        })
+      );
+      setMovies(moviesArray);
+    } else {
+      setMovies([]);
+    }
   };
 
   const handleInputChange = (
@@ -179,6 +186,45 @@ function AdminPage() {
     }));
   };
 
+  const handleShowingChange = (
+    showingIndex: number,
+    field: "location" | "times",
+    value: string,
+    timeIndex?: number
+  ) => {
+    setNewMovie((prevMovie) => {
+      const updatedShowings = [...prevMovie.showings];
+      if (field === "location") {
+        updatedShowings[showingIndex].location = value;
+      } else if (timeIndex !== undefined) {
+        updatedShowings[showingIndex].times[timeIndex] = value;
+      }
+      return { ...prevMovie, showings: updatedShowings };
+    });
+  };
+
+  const addShowing = () => {
+    setNewMovie((prevMovie) => ({
+      ...prevMovie,
+      showings: [...prevMovie.showings, { location: "", times: [""] }],
+    }));
+  };
+
+  const addTime = (showingIndex: number) => {
+    setNewMovie((prevMovie) => {
+      const updatedShowings = [...prevMovie.showings];
+      // Only push a new empty string if the last time entry is not empty
+      if (
+        updatedShowings[showingIndex].times[
+          updatedShowings[showingIndex].times.length - 1
+        ] !== ""
+      ) {
+        updatedShowings[showingIndex].times.push("");
+      }
+      return { ...prevMovie, showings: updatedShowings };
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const moviesRef = ref(database, "movies");
@@ -186,12 +232,11 @@ function AdminPage() {
     setNewMovie({
       title: "",
       year: "",
-      location: "",
-      time: "",
       price: "",
       cast: "",
       movieLength: "",
       status: "Now Playing",
+      showings: [{ location: "", times: [""] }],
     });
     getMovies();
   };
@@ -239,22 +284,6 @@ function AdminPage() {
             />
             <Input
               type="text"
-              name="location"
-              value={newMovie.location}
-              onChange={handleInputChange}
-              placeholder="Location"
-              required
-            />
-            <Input
-              type="text"
-              name="time"
-              value={newMovie.time}
-              onChange={handleInputChange}
-              placeholder="Starting Time"
-              required
-            />
-            <Input
-              type="text"
               name="price"
               value={newMovie.price}
               onChange={handleInputChange}
@@ -286,19 +315,80 @@ function AdminPage() {
               <option value="Now Playing">Now Playing</option>
               <option value="Coming Soon">Coming Soon</option>
             </Select>
-            <Button type="submit">Add Movie</Button>
+            {newMovie.showings.map((showing, showingIndex) => (
+              <div key={showingIndex}>
+                <Input
+                  type="text"
+                  value={showing.location}
+                  onChange={(e) =>
+                    handleShowingChange(
+                      showingIndex,
+                      "location",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Location"
+                  required
+                />
+                {showing.times.map((time, timeIndex) => (
+                  <div key={timeIndex}>
+                    <Input
+                      type="text"
+                      value={time}
+                      onChange={(e) =>
+                        handleShowingChange(
+                          showingIndex,
+                          "times",
+                          e.target.value,
+                          timeIndex
+                        )
+                      }
+                      placeholder="Time"
+                      required
+                    />
+                  </div>
+                ))}
+                <Button type="button" onClick={() => addTime(showingIndex)}>
+                  Add Time
+                </Button>
+              </div>
+            ))}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "10px",
+              }}
+            >
+              <Button type="button" onClick={addShowing}>
+                Add Showing
+              </Button>
+              <Button type="submit">Add Movie</Button>
+            </div>
           </form>
           <MovieListBackground>
-            {movies.map((movie) => (
-              <MovieListItem key={movie.id}>
-                <span>
-                  {movie.title} - {movie.year} - {movie.location} - {movie.time}{" "}
-                  - ${movie.price} - {movie.movieLength} hr - {movie.cast} -{" "}
-                  {movie.status}
-                </span>
-                <Button onClick={() => handleDelete(movie.id)}>Delete</Button>
-              </MovieListItem>
-            ))}
+            {movies.length > 0 ? (
+              movies.map((movie) => (
+                <MovieListItem key={movie.id}>
+                  <span>
+                    {movie.title} - {movie.year} - ${movie.price} -{" "}
+                    {movie.movieLength} hr - {movie.cast} - {movie.status}
+                    <br />
+                    Showings:{" "}
+                    {movie.showings &&
+                      movie.showings.map((showing, index) => (
+                        <span key={index}>
+                          {showing.location}: {showing.times.join(", ")}
+                          {index < movie.showings.length - 1 ? " - " : ""}
+                        </span>
+                      ))}
+                  </span>
+                  <Button onClick={() => handleDelete(movie.id)}>Delete</Button>
+                </MovieListItem>
+              ))
+            ) : (
+              <p>No movies available.</p>
+            )}
           </MovieListBackground>
         </AdminDisplay>
       </WhiteCanvas>
