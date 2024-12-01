@@ -150,6 +150,13 @@ const PaymentPage: React.FC = () => {
                   placeholder="PayPal Email"
                   required
                 />
+                <Input
+                  name="paypalPassword"
+                  value={paymentInfo.paypalEmail}
+                  onChange={handlePaymentChange}
+                  placeholder="Paypal Password"
+                  required
+                />
               </>
             )}
 

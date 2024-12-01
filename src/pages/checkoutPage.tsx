@@ -297,7 +297,7 @@ function CheckoutPage(): JSX.Element {
       alert("Please select a time before purchasing.");
       return;
     }
-    navigate(`/PaymentPage/${movieId}`, {
+    navigate(`/PaymentPage`, {
       state: { selectedLocation, selectedTime },
     });
   };
@@ -364,7 +364,7 @@ function CheckoutPage(): JSX.Element {
   const handleTimeSelection = (time: string) => {
     setSelectedTime(time);
   };
-  
+
   const homePage = () => {
     navigate("/homePage");
     navigate("/homePage");
