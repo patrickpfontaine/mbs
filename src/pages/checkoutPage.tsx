@@ -266,7 +266,7 @@ function CheckoutPage(): JSX.Element {
             username,
             ...data,
           }));
-        console.log(Object.values(reviewArray));
+        //console.log(Object.values(reviewArray));
         setReviews(Object.values(reviewArray));
       } catch (e) {
         console.error("Error updating entry: ", e);
@@ -305,6 +305,10 @@ function CheckoutPage(): JSX.Element {
   const handleAddReview = async () => {
     if (!userreview || rating === 0) {
       alert("Please add a review and select a star rating.");
+      return;
+    }
+    if (!userData) {
+      alert("Please sign in to add a review.");
       return;
     }
     const reviewsRef = ref(
