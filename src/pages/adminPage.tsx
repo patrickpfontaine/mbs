@@ -140,6 +140,7 @@ interface Movie {
   movieLength: string;
   status: string;
   showings: MovieShowing[];
+  posterURL: string;
 }
 
 function AdminPage() {

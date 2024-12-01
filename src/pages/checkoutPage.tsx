@@ -360,8 +360,9 @@ function CheckoutPage(): JSX.Element {
   const handleTimeSelection = (time: string) => {
     setSelectedTime(time);
   };
-
+  
   const homePage = () => {
+    navigate("/homePage");
     navigate("/homePage");
   };
 
@@ -369,6 +370,7 @@ function CheckoutPage(): JSX.Element {
     return (
       <Background>
         <WhiteCanvas>
+          <p>Loading...</p>
           <p>Loading...</p>
         </WhiteCanvas>
       </Background>

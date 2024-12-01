@@ -100,7 +100,7 @@ const FilterButton = styled("button")({
 
 const MovieCardDeck = styled("div")({
   display: `grid`,
-  gridTemplateColumns: `repeat(auto-fit, minmax(300px, 1fr))`,
+  gridTemplateColumns: `repeat(3, minmax(300px, 1fr))`,
   gap: `40px`,
   width: `100%`,
 });
@@ -110,7 +110,7 @@ const MovieCard = styled("div")({
   flexDirection: `column`,
   borderRadius: `10px`,
   overflow: `hidden`,
-  boxShadow: `0px 5px 5px rgba(0, 0, 0, 1)`,
+  boxShadow: `0px 5px 12px -2px rgba(0, 0, 0, .2)`,
 });
 
 //Dud movie poster for simplicity
@@ -208,7 +208,10 @@ function HomePage(): JSX.Element {
             type="search"
             value={search}
             placeholder="Search movies..."
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              e.target.value !== "" ? setFilter("") : setFilter("Now Playing");
+            }}
           />
         </SearchBar>
 
@@ -216,12 +219,31 @@ function HomePage(): JSX.Element {
           <FilterButton
             onClick={() => [setFilter("Now Playing"), setSearch("")]}
           >
-            Now Playing
+            <text
+              style={{
+                textDecorationLine:
+                  filter === "Now Playing" ? "underline" : "none",
+                color: filter === "Now Playing" ? "#000000" : "#777777",
+                textAlign: "center",
+              }}
+            >
+              Now Playing
+            </text>
           </FilterButton>
+
           <FilterButton
             onClick={() => [setFilter("Coming Soon"), setSearch("")]}
           >
-            Coming Soon
+            <text
+              style={{
+                textDecorationLine:
+                  filter === "Coming Soon" ? "underline" : "none",
+                color: filter === "Coming Soon" ? "#000000" : "#777777",
+                textAlign: "center",
+              }}
+            >
+              Coming Soon
+            </text>
           </FilterButton>
         </MovieFilters>
 
