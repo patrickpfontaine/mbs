@@ -6,7 +6,7 @@ import { ref, get } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
 
 const Background = styled("div")({
-  background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, black 100%)`,
+  background: `linear-gradient(180deg, DarkSlateBlue 0%, CadetBlue 100%)`,
   display: `flex`,
   flexDirection: `column`,
   width: `100%`,
@@ -56,7 +56,7 @@ const Title = styled("h2")({
   color: `rgba(0, 0, 0, 1)`,
   fontFamily: `Inter`,
   fontWeight: `550`,
-  fontSize: `36px`,
+  fontSize: `30px`,
   textAlign: `center`,
   marginBottom: `25px`,
 });
@@ -91,7 +91,7 @@ const FilterButton = styled("button")({
   border: `none`,
   fontFamily: `Inter`,
   fontSize: `20px`,
-  textDecoration: "underline",
+  backgroundColor: `white`,
   cursor: `pointer`,
   "&:hover, &:focus": {
     color: `rgb(74, 50, 209)`,
@@ -100,8 +100,7 @@ const FilterButton = styled("button")({
 
 const MovieCardDeck = styled("div")({
   display: `grid`,
-  justifyContent: `center`,
-  gridTemplateColumns: `repeat(auto-fit, minmax(20%, 20%))`,
+  gridTemplateColumns: `repeat(auto-fit, minmax(300px, 1fr))`,
   gap: `40px`,
   width: `100%`,
 });
@@ -111,20 +110,19 @@ const MovieCard = styled("div")({
   flexDirection: `column`,
   borderRadius: `10px`,
   overflow: `hidden`,
-  //width: "25%",
-  //maxWidth: "25%",
   boxShadow: `0px 5px 5px rgba(0, 0, 0, 1)`,
 });
 
 //Dud movie poster for simplicity
 const MoviePoster = styled("div")({
+  position: `relative`,
   width: `100%`,
-  paddingTop: `140%`,
-  background: `linear-gradient(180deg, DarkSlateBlue 0%, CadetBlue 100%)`,
+  paddingTop: `140%`, // 2:3 aspect ratio
+  background: `linear-gradient(45deg, DarkSlateBlue 0%, CadetBlue 100%)`,
 });
 
 const MovieTitle = styled("h3")({
-  fontFamily: `Inter, sans-serif`,
+  fontFamily: `Inter`,
   fontSize: `24px`,
   //textAlign: `center`,
   margin: `16px 0`,
@@ -147,6 +145,7 @@ interface Movie {
   cast: string;
   movieLength: string;
   status: string;
+  posterURL: string;
 }
 
 function HomePage(): JSX.Element {
@@ -201,7 +200,9 @@ function HomePage(): JSX.Element {
             <img src={profileImage} alt="Profile Page" />
           </ButtonWrapper>
         </Header>
+
         <Title>View Movies and Buy Tickets!</Title>
+
         <SearchBar>
           <SearchInput
             type="search"
@@ -210,6 +211,7 @@ function HomePage(): JSX.Element {
             onChange={(e) => setSearch(e.target.value)}
           />
         </SearchBar>
+
         <MovieFilters>
           <FilterButton
             onClick={() => [setFilter("Now Playing"), setSearch("")]}
@@ -222,6 +224,7 @@ function HomePage(): JSX.Element {
             Coming Soon
           </FilterButton>
         </MovieFilters>
+
         <MovieCardDeck>
           {filteredMovies.map((movie) => (
             <ButtonWrapper
@@ -229,7 +232,19 @@ function HomePage(): JSX.Element {
               key={movie.id}
             >
               <MovieCard key={movie.id}>
-                <MoviePoster />
+                <MoviePoster>
+                  <img
+                    src={movie.posterURL}
+                    alt=""
+                    style={{
+                      display: "block",
+                      position: "absolute",
+                      bottom: "0",
+                      width: "100%",
+                      paddingTop: "0%",
+                    }}
+                  />
+                </MoviePoster>
                 <MovieTitle>{movie.title}</MovieTitle>
               </MovieCard>
             </ButtonWrapper>

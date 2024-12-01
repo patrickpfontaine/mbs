@@ -145,13 +145,14 @@ interface Movie {
 function AdminPage() {
   const switchPage = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [newMovie, setNewMovie] = useState<Omit<Movie, "id">>({
+  const [newMovie, setNewMovie] = useState({
     title: "",
     year: "",
     price: "",
     cast: "",
     movieLength: "",
     status: "Now Playing",
+    posterURL: "",
     showings: [{ location: "", times: [""] }],
   });
 
@@ -236,6 +237,7 @@ function AdminPage() {
       cast: "",
       movieLength: "",
       status: "Now Playing",
+      posterURL: "",
       showings: [{ location: "", times: [""] }],
     });
     getMovies();
@@ -282,6 +284,7 @@ function AdminPage() {
               placeholder="Year Created"
               required
             />
+
             <Input
               type="text"
               name="price"
@@ -304,6 +307,14 @@ function AdminPage() {
               value={newMovie.movieLength}
               onChange={handleInputChange}
               placeholder="Movie Length"
+              required
+            />
+            <Input
+              type="text"
+              name="posterURL"
+              value={newMovie.posterURL}
+              onChange={handleInputChange}
+              placeholder="Link to poster image"
               required
             />
             <Select
