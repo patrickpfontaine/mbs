@@ -70,6 +70,7 @@ const PaymentPage: React.FC = () => {
     expiryDate: "",
     cvv: "",
     paypalEmail: "",
+    paypalPassword: "",
   });
   const navigate = useNavigate();
 
@@ -171,7 +172,7 @@ const PaymentPage: React.FC = () => {
                 />
                 <Input
                   name="paypalPassword"
-                  value={paymentInfo.paypalEmail}
+                  value={paymentInfo.paypalPassword}
                   onChange={handlePaymentChange}
                   placeholder="PayPal Password"
                   required

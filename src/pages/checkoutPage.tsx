@@ -101,23 +101,6 @@ const Header = styled("header")({
   marginBottom: `20px`,
 });
 
-const ActionContainer = styled("div")({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  width: "100%",
-  maxWidth: "800px",
-  marginTop: "40px",
-});
-
-const ReviewSection = styled("div")({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  gap: "10px", // Adjust spacing between elements
-  width: "100%",
-});
-
 const ReviewInput = styled("textarea")({
   backgroundColor: `rgb(255, 255, 255)`,
   border: `1px solid rgb(180, 178, 178)`,
@@ -155,16 +138,11 @@ const ReviewsSection = styled("div")({
 });
 
 const ReviewCard = styled("div")({
-  backgroundColor: "#f9f9f9",
+  backgroundColor: "#f1f1f1",
   padding: "20px",
   marginBottom: "15px",
   borderRadius: "10px",
   boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
-});
-
-const ReviewRating = styled("div")({
-  display: "flex",
-  alignItems: "center",
 });
 
 const ReviewText = styled("p")({
@@ -344,6 +322,10 @@ function CheckoutPage(): JSX.Element {
   const handlePurchase = () => {
     if (!selectedTime) {
       alert("Please select a time before purchasing.");
+      return;
+    }
+    if (!numTickets) {
+      alert("Please select amount of tickets before purchasing.");
       return;
     }
     navigate(`/PaymentPage`, {
