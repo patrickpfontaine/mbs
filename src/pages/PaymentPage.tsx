@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ref, push } from "firebase/database";
+import { database } from "../firebase/firebaseConfig";
 
 const PaymentContainer = styled("div")({
   background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, black 100%)`,
@@ -54,9 +56,17 @@ const SectionTitle = styled("h3")({
   marginBottom: "10px",
 });
 
+interface Ticket {
+  billingInfo: string;
+  movieTitle: string;
+  showTime: string;
+  theaterLocation: string;
+  ticketCount: number;
+}
+
 const PaymentPage: React.FC = () => {
   const location = useLocation();
-  const { movieTitle, theaterLocation, showTime, ticketCount, ticketPrice } = location.state || {};
+  const { movieTitle, theaterLocation, showTime, ticketCount, ticketPrice, userid } = location.state || {};
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [billingInfo, setBillingInfo] = useState({
     name: "",
@@ -74,6 +84,8 @@ const PaymentPage: React.FC = () => {
   });
   const navigate = useNavigate();
 
+  const [ticketInfo, setTicketInfo] = useState<Ticket>();
+
   const handleBillingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setBillingInfo((prev) => ({
@@ -90,12 +102,28 @@ const PaymentPage: React.FC = () => {
     }));
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (!billingInfo.name) {
       alert("Please fill out your billing information.");
       return;
     }
     alert(`Payment successful using ${paymentMethod}`);
+    
+    try {
+      const ticketRef = ref(database, `users/${userid}/tickets`);
+      await push(ticketRef, {
+        billingInfo: billingInfo.name,
+        movieTitle: movieTitle,
+        showTime: showTime,
+        theaterLocation: theaterLocation,
+        ticketCount: ticketCount,
+      });
+      console.log("Item appended to array successfully");
+      //window.location.reload();
+    } catch (e) {
+      console.error("Error updating entry: ", e);
+    }
+
     navigate("/ticket", {
       state: {
         name: billingInfo.name,

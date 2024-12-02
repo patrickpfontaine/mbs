@@ -320,23 +320,26 @@ function CheckoutPage(): JSX.Element {
   }, [movieId, user, updateReviews]);
 
   const handlePurchase = () => {
-    if (!selectedTime) {
-      alert("Please select a time before purchasing.");
-      return;
+    if (user) {
+      if (!selectedTime) {
+        alert("Please select a time before purchasing.");
+        return;
+      }
+      if (!numTickets) {
+        alert("Please select amount of tickets before purchasing.");
+        return;
+      }
+      navigate(`/PaymentPage`, {
+        state: {
+          movieTitle: movie.title, 
+          theaterLocation: selectedLocation,
+          showTime: selectedTime,
+          ticketCount: numTickets,
+          ticketPrice: movie.price,
+          userid: user.uid,
+        },
+      });
     }
-    if (!numTickets) {
-      alert("Please select amount of tickets before purchasing.");
-      return;
-    }
-    navigate(`/PaymentPage`, {
-      state: {
-        movieTitle: movie.title, 
-        theaterLocation: selectedLocation,
-        showTime: selectedTime,
-        ticketCount: numTickets,
-        ticketPrice: movie.price
-      },
-    });
   };
 
   const handleAddReview = async () => {

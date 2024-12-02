@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import HomeImage from "../images/HomeIcon.png";
 import { useNavigate } from "react-router-dom";
-import { ref, get } from "firebase/database";
+import { ref, get, remove } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
 import { useAuth } from "../firebase/userAuth";
 //import { getAuth } from "firebase/auth";
@@ -120,11 +120,69 @@ const AdminButton = styled("button")({
   //marginBottom: `15px`,
 });
 
+const TicketSection = styled("div")({
+  width: "100%",
+  marginTop: "30px",
+});
+
+const TicketCard = styled("div")({
+  backgroundColor: "#f1f1f1",
+  padding: "20px",
+  marginBottom: "15px",
+  borderRadius: "10px",
+  boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+});
+
+const TicketText = styled("p")({
+  fontFamily: "Montserrat, sans-serif",
+  fontSize: "16px",
+  margin: "10px 0",
+  wrap: "hard",
+  overflowWrap: "anywhere",
+});
+const TicketList = styled("div")({
+  display: `grid`,
+  gridTemplateColumns: `repeat(2, minmax(100px, 1fr))`,
+  gap: `40px`,
+  width: `100%`,
+  resize: "none",
+});
+
+const XButton = styled("button")({
+  border: `none`,
+  fontSize: `18px`,
+  cursor: `pointer`,
+  "&:hover, &:focus": {
+    color: `rgb(74, 50, 209)`,
+  },
+});
+
+const Label = styled("button")({
+  fontWeight: "bold",
+  border: `none`,
+  fontSize: `18px`,
+  cursor: `pointer`,
+  "&:hover, &:focus": {
+    color: `rgb(74, 50, 209)`,
+  },
+});
+
+interface Ticket {
+  id: string;
+  billingInfo: string;
+  movieTitle: string;
+  showTime: string;
+  theaterLocation: string;
+  ticketCount: number;
+}
+
 function ProfilePage(): JSX.Element {
   const switchPage = useNavigate();
   const [userData, setUserData] = useState<any>(null);
   const { user, logOut } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [updateTickets, setupdateTickets] = useState(false);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -140,8 +198,29 @@ function ProfilePage(): JSX.Element {
       }
     };
 
+    const fetchTickets = async () => {
+      try {
+        if (user) {
+          const ticketsRef = ref(database, `users/${user.uid}/tickets`);
+          const snapshot = await get(ticketsRef);
+          const currentItems: Ticket[] = snapshot.val() || [];
+          const ticketsArray = Object.entries(currentItems)
+            .map(([id, data]: [string, any]) => ({
+              id,
+              ...data,
+            }));
+          //console.log(Object.values(reviewArray));
+          setTickets(Object.values(ticketsArray));
+        }
+      } catch (e) {
+        console.error("Error updating entry: ", e);
+      }
+      
+    };
+
     getUserData();
-  }, [user]);
+    fetchTickets();
+  }, [user, updateTickets]);
 
   const homePage = () => {
     switchPage("/homePage");
@@ -162,6 +241,32 @@ function ProfilePage(): JSX.Element {
     } catch (error) {
       console.error("Something went wrong", error);
     }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (user) {
+      const ticketsRef = ref(database, `users/${user.uid}/tickets/${id}`);
+      try {
+        await remove(ticketsRef);
+        setupdateTickets(true);
+        console.log("Item removed from array successfully");
+        //window.location.reload();
+      } catch (e) {
+        console.error("Error updating entry: ", e);
+      }
+    }
+  };
+
+  const handleTicketButton = async (selected_ticket: Ticket) => {
+    switchPage("/ticket", {
+      state: {
+        name: selected_ticket.billingInfo,
+        movieTitle: selected_ticket.movieTitle,
+        theaterLocation: selected_ticket.theaterLocation,
+        showTime: selected_ticket.showTime,
+        ticketCount: selected_ticket.ticketCount,
+      },
+    });
   };
 
   return (
@@ -199,6 +304,27 @@ function ProfilePage(): JSX.Element {
         </ProfileInfo>
         {isAdmin && <AdminButton onClick={adminPage}>Edit Movies</AdminButton>}
         <SignoutButton onClick={signOut}> Sign Out </SignoutButton>
+        <TicketSection>
+          <h2>Tickets</h2>
+          {tickets.length > 0 ? (
+            <TicketList>
+              {Object.values(tickets).map((ticket, index) => (
+                <TicketCard key={index}>
+                  <Label onClick={() => handleTicketButton(ticket)}>
+                    {ticket.movieTitle} @ {ticket.theaterLocation}
+                  </Label>
+                  <XButton onClick={() => handleDelete(ticket.id)}>
+                    X
+                  </XButton>
+                  <TicketText>{ticket.showTime}</TicketText>
+                  <TicketText>Amount: {ticket.ticketCount}</TicketText>
+                </TicketCard>
+              ))}
+            </TicketList>
+          ) : (
+            <p>No tickets have been purchased!</p>
+          )}
+        </TicketSection>
       </WhiteCanvas>
     </Background>
   );
