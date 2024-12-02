@@ -26,7 +26,7 @@ const TicketPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Destructure ticket details passed via location.state
-  const { name, movieTitle, theaterLocation, showTime } = location.state || {};
+  const { name, movieTitle, theaterLocation, showTime, ticketCount } = location.state || {};
 
   if (!name || !movieTitle || !theaterLocation || !showTime) {
     return (
@@ -52,6 +52,9 @@ const TicketPage: React.FC = () => {
       </p>
       <p>
         <strong>Showtime:</strong> {showTime}
+      </p>
+      <p>
+        <strong>Tickets:</strong> {ticketCount}
       </p>
       <QRCodeContainer>
         <QRCodeCanvas

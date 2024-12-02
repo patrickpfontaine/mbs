@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const PaymentContainer = styled("div")({
   background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, black 100%)`,
@@ -15,6 +15,7 @@ const PaymentContainer = styled("div")({
 
 const WhiteCanvas = styled("div")({
   backgroundColor: `white`,
+  color: `black`,
   borderRadius: `20px`,
   padding: `40px`,
   width: `100%`,
@@ -54,6 +55,8 @@ const SectionTitle = styled("h3")({
 });
 
 const PaymentPage: React.FC = () => {
+  const location = useLocation();
+  const { movieTitle, theaterLocation, showTime, ticketCount, ticketPrice } = location.state || {};
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [billingInfo, setBillingInfo] = useState({
     name: "",
@@ -95,9 +98,10 @@ const PaymentPage: React.FC = () => {
     navigate("/ticket", {
       state: {
         name: billingInfo.name,
-        movieTitle: "Inception", // Replace with dynamic movie title
-        theaterLocation: "Downtown Cinema, TX", // Replace with dynamic location
-        showTime: "7:00 PM", // Replace with dynamic time
+        movieTitle: movieTitle,
+        theaterLocation: theaterLocation,
+        showTime: showTime,
+        ticketCount: ticketCount
       },
     });
   };
@@ -105,6 +109,7 @@ const PaymentPage: React.FC = () => {
   return (
     <PaymentContainer>
       <WhiteCanvas>
+        <text>Total price: ${((parseFloat(ticketCount) * parseFloat(ticketPrice))*1.0625).toFixed(2)}</text>
         <h2>Select Payment Method</h2>
         <PaymentOption onClick={() => setPaymentMethod("PayPal")}>
           Pay with PayPal

@@ -21,6 +21,14 @@ import {
   MenuItem,
   Button as MuiButton,
 } from "@mui/material";
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid2';
+import {
+  Unstable_NumberInput as BaseNumberInput,
+  NumberInputProps,
+  numberInputClasses,
+} from '@mui/base/Unstable_NumberInput';
 
 const Background = styled("div")({
   background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, rgb(0, 0, 0) 100%)`,
@@ -37,7 +45,7 @@ const Background = styled("div")({
 const WhiteCanvas = styled("main")({
   backgroundColor: `rgba(255, 255, 255, 1)`,
   borderRadius: `20px`,
-  padding: `40px`,
+  padding: `60px`,
   width: `100%`,
   maxWidth: `85%`,
   boxSizing: `border-box`,
@@ -46,24 +54,21 @@ const WhiteCanvas = styled("main")({
   alignItems: `center`,
 });
 
-const MoviePoster = styled("img")({
-  borderRadius: "10px",
-  width: "100%",
-  maxWidth: "300px",
-});
 
 const MovieTitle = styled("h1")({
   fontFamily: "Montserrat, sans-serif",
   fontSize: "36px",
   fontWeight: "bold",
-  marginBottom: "20px",
+  width: "650px",
+  marginBottom: "0px",
 });
 
 const MovieInfo = styled("p")({
   fontFamily: "Montserrat, sans-serif",
   fontSize: "18px",
-  textAlign: "center",
-  marginBottom: "20px",
+  backgroundColor: "white",
+  textAlign: "left",
+  width: "650px",
 });
 
 const Label = styled("span")({
@@ -84,7 +89,16 @@ const HomeButton = styled("button")({
   border: `none`,
   cursor: "pointer",
   textAlign: "right",
+  alignItems: "right"
   //padding: `10px`,
+});
+
+const Header = styled("header")({
+  width: `100%`,
+  display: `flex`,
+  justifyContent: `right`,
+  alignItems: `center`,
+  marginBottom: `20px`,
 });
 
 const ActionContainer = styled("div")({
@@ -186,9 +200,18 @@ const LocationSelect = styled(Select<string>)({
 const TimeButtonsContainer = styled("div")({
   display: "flex",
   flexWrap: "wrap",
-  justifyContent: "center",
+  justifyContent: "left",
   gap: "10px",
   marginBottom: "20px",
+});
+
+const MoviePoster = styled("div")({
+  position: `relative`,
+  width: `100%`,
+  paddingTop: `140%`, // 2:3 aspect ratio
+  borderRadius: `10px`,
+  overflow: `hidden`,
+  background: `linear-gradient(45deg, DarkSlateBlue 0%, CadetBlue 100%)`,
 });
 
 interface Movie {
@@ -204,6 +227,7 @@ interface Movie {
     location: string;
     times: string[];
   }>;
+  synopsis: string;
 }
 
 interface Review {
@@ -213,6 +237,29 @@ interface Review {
   createdAt: object;
   rating: number;
 }
+
+const NumberInput = React.forwardRef(function CustomNumberInput(
+  props: NumberInputProps,
+  ref: React.ForwardedRef<HTMLDivElement>,
+) {
+  return (
+    <BaseNumberInput
+      slotProps={{
+        incrementButton: {
+          children: '▴',
+        },
+        decrementButton: {
+          children: '▾',
+        },
+      }}
+      {...props}
+      ref={ref}
+    />
+  );
+});
+
+
+
 
 function CheckoutPage(): JSX.Element {
   const navigate = useNavigate();
@@ -233,6 +280,8 @@ function CheckoutPage(): JSX.Element {
   const [userData, setUserData] = useState<any>(null);
   const { user, logOut } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const [numTickets, setNumTickets] = React.useState<number | null>(null);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -298,7 +347,13 @@ function CheckoutPage(): JSX.Element {
       return;
     }
     navigate(`/PaymentPage`, {
-      state: { selectedLocation, selectedTime },
+      state: {
+        movieTitle: movie.title, 
+        theaterLocation: selectedLocation,
+        showTime: selectedTime,
+        ticketCount: numTickets,
+        ticketPrice: movie.price
+      },
     });
   };
 
@@ -384,81 +439,125 @@ function CheckoutPage(): JSX.Element {
   return (
     <Background>
       <WhiteCanvas>
-        <HomeButton onClick={homePage}>
-          <img src={HomeImage} alt="Home Page" />
-        </HomeButton>
-        <MovieTitle>{movie.title}</MovieTitle>
-        <MoviePoster src={movie.poster} alt={`${movie.title} poster`} />
-        <MovieInfo>
-          Year: {movie.year} | Price: ${movie.price} | Cast: {movie.cast}
-        </MovieInfo>
-
-        <LocationSelect
-          value={selectedLocation}
-          onChange={handleLocationChange}
-          displayEmpty
-        >
-          <MenuItem value="" disabled>
-            Select a location
-          </MenuItem>
-          {movie.showings &&
-            movie.showings.map((showing: any, index: any) => (
-              <MenuItem key={index} value={showing.location}>
-                {showing.location}
-              </MenuItem>
-            ))}
-        </LocationSelect>
-
-        <TimeButtonsContainer>
-          {availableTimes.map((time, index) => (
-            <Button2
-              key={index}
-              onClick={() => handleTimeSelection(time)}
-              variant={selectedTime === time ? "contained" : "outlined"}
-              color="primary"
+        <Header>
+          <HomeButton onClick={homePage}>
+            <img src={HomeImage} alt="Home Page" />
+          </HomeButton>
+        </Header>
+        <Box sx={{ flexGrow: 1, bgcolor: "#FFFFFF", width: "85%"}}>
+          <Grid container spacing={2}>
+            <Grid size={3}>
+              <MoviePoster>
+                <img
+                  src={movie.posterURL}
+                  alt=""
+                  style={{
+                    display: "block",
+                    position: "absolute",
+                    bottom: "0",
+                    width: "100%",
+                    paddingTop: "0%",
+                  }}
+                />
+              </MoviePoster>
+            </Grid>
+            
+            <Grid container spacing={1}>
+              <Grid size={12} justifyContent={"left"} padding={"10px"}>
+                <MovieTitle>{movie.title}</MovieTitle>
+                <MovieInfo>
+                  {movie.year}
+                </MovieInfo>
+                <MovieInfo>
+                  {movie.cast}
+                </MovieInfo>
+                <MovieInfo>
+                  {movie.synopsis}
+                </MovieInfo>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Box>
+        
+        {movie.status === "Now Playing" &&    //only display purchase information if movie is now playing
+          <Box justifyItems={"left"}>
+            <text>Ticket price: ${movie.price}</text>
+            <LocationSelect
+              value={selectedLocation}
+              onChange={handleLocationChange}
+              displayEmpty
             >
-              {time}
+              <MenuItem value="" disabled>
+                Select a location
+              </MenuItem>
+              {movie.showings &&
+                movie.showings.map((showing: any, index: any) => (
+                  <MenuItem key={index} value={showing.location}>
+                    {showing.location}
+                  </MenuItem>
+                ))}
+            </LocationSelect>
+
+            <NumberInput
+              aria-label="Number of tickets"
+              placeholder="Number of tickets"
+              value={numTickets}
+              onChange={(event, val) => setNumTickets(val)}
+              min = {1}
+              max = {10}
+            />
+
+            <TimeButtonsContainer>
+              {availableTimes.map((time, index) => (
+                <Button2
+                  key={index}
+                  onClick={() => handleTimeSelection(time)}
+                  variant={selectedTime === time ? "contained" : "outlined"}
+                  color="inherit"
+                >
+                  {time}
+                </Button2>
+              ))}
+            </TimeButtonsContainer>
+            
+            <Button2
+              onClick={handlePurchase}
+              variant="contained"
+              color="secondary"
+              size="large"
+            >
+              Purchase Ticket
             </Button2>
-          ))}
-        </TimeButtonsContainer>
+          </Box>
+        }
 
-        <Button2
-          onClick={handlePurchase}
-          variant="contained"
-          color="secondary"
-          size="large"
-        >
-          Purchase Ticket
-        </Button2>
-
-        <ActionContainer>
-          {/* Left Section: Add Review */}
-          <ReviewSection>
-            <ReviewInput
-              placeholder="Write your review..."
-              value={userreview}
-              onChange={(e) => [
-                setUserReview(e.target.value.slice(0, 500)),
-                setNewReview({
-                  date: new Date().toLocaleDateString(),
-                  comment: e.target.value.slice(0, 500),
-                }),
-              ]}
-            />
-            <SmallLabel>
-              {userreview.length}
-              /500 letters
-            </SmallLabel>
-            <ReactStars
-              count={5}
-              value={rating}
-              onChange={(newRating: number) => setRating(newRating)}
-              size={24}
-              color2={"#ffd700"}
-            />
-            <Button onClick={handleAddReview}>Add Review</Button>
-          </ReviewSection>
-        </ActionContainer>
+        <Box sx={{ flexGrow: 1, bgcolor: "#FFFFFF", width: "98%", marginTop: "70px"}}>
+          <ReactStars
+            count={5}
+            value={rating}
+            onChange={(newRating: number) => setRating(newRating)}
+            size={24}
+            color2={"#ffd700"}
+          />
+          <Grid container spacing={1}>
+            <Grid size={12}>
+              <ReviewInput
+                placeholder="Write your review..."
+                value={userreview}
+                onChange={(e) => [
+                  setUserReview(e.target.value.slice(0, 500)),
+                  setNewReview({
+                    date: new Date().toLocaleDateString(),
+                    comment: e.target.value.slice(0, 500),
+                  }),
+                ]}
+              />
+            </Grid>
+            <Grid size={2}>
+              <Button onClick={handleAddReview}>Add Review</Button>
+            </Grid>
+          </Grid>
+        </Box>
 
         <ReviewsSection>
           <h2>Reviews</h2>
@@ -498,3 +597,4 @@ function CheckoutPage(): JSX.Element {
 }
 
 export default CheckoutPage;
+

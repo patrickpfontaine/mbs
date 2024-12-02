@@ -141,6 +141,7 @@ interface Movie {
   status: string;
   showings: MovieShowing[];
   posterURL: string;
+  synopsis: string;
 }
 
 function AdminPage() {
@@ -155,6 +156,7 @@ function AdminPage() {
     status: "Now Playing",
     posterURL: "",
     showings: [{ location: "", times: [""] }],
+    synopsis: "",
   });
 
   useEffect(() => {
@@ -240,6 +242,7 @@ function AdminPage() {
       status: "Now Playing",
       posterURL: "",
       showings: [{ location: "", times: [""] }],
+      synopsis: "",
     });
     getMovies();
   };
@@ -316,6 +319,14 @@ function AdminPage() {
               value={newMovie.posterURL}
               onChange={handleInputChange}
               placeholder="Link to poster image"
+              required
+            />
+            <Input
+              type="text"
+              name="synopsis"
+              value={newMovie.synopsis}
+              onChange={handleInputChange}
+              placeholder="Movie synopsis"
               required
             />
             <Select
