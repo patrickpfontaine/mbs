@@ -54,7 +54,7 @@ const Slogan = styled("p")({
 
 const Title = styled("h2")({
   color: `rgba(0, 0, 0, 1)`,
-  fontFamily: `Inter`,
+  fontFamily: `Montserrat, sans-serif`,
   fontWeight: `550`,
   fontSize: `30px`,
   textAlign: `center`,
@@ -89,7 +89,7 @@ const MovieFilters = styled("div")({
 
 const FilterButton = styled("button")({
   border: `none`,
-  fontFamily: `Inter`,
+  fontFamily: `Montserrat, sans-serif`,
   fontSize: `20px`,
   backgroundColor: `white`,
   cursor: `pointer`,
@@ -122,7 +122,7 @@ const MoviePoster = styled("div")({
 });
 
 const MovieTitle = styled("h3")({
-  fontFamily: `Inter`,
+  fontFamily: `Montserrat, sans-serif`,
   fontSize: `24px`,
   //textAlign: `center`,
   margin: `16px 0`,
