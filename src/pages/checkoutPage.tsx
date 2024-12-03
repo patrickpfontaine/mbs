@@ -11,6 +11,7 @@ import {
   serverTimestamp,
   orderByChild,
   query,
+  increment
 } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
 import { useAuth } from "../firebase/userAuth";
@@ -338,6 +339,22 @@ function CheckoutPage(): JSX.Element {
     }
   };
 
+  const handleAddTickets = async () => {
+    let showIndex = movie.showings.findIndex((showing: { location: string; }) => showing.location === selectedLocation);
+      try {
+      await update(
+        ref(database, `movies/${movieId}/showings/${showIndex}`),
+        {
+          ticketsSold: increment(numTickets as number)
+        }
+      );
+      console.log("Item appended to array successfully");
+      //window.location.reload();
+    } catch (e) {
+      console.error("Error updating entry: ", e);
+    }
+  };
+
   const handleAddReview = async () => {
     if (!userreview || rating === 0) {
       alert("Please add a review and select a star rating.");
@@ -496,7 +513,7 @@ function CheckoutPage(): JSX.Element {
             </TimeButtonsContainer>
 
             <Button2
-              onClick={handlePurchase}
+              onClick={() => [handlePurchase(), handleAddTickets()]}
               variant="contained"
               color="secondary"
               size="large"

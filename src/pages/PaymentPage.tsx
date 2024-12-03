@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ref, push } from "firebase/database";
+import { ref, push, update } from "firebase/database";
 import { database } from "../firebase/firebaseConfig";
 
 const PaymentContainer = styled("div")({
@@ -66,7 +66,7 @@ interface Ticket {
 
 const PaymentPage: React.FC = () => {
   const location = useLocation();
-  const { movieTitle, theaterLocation, showTime, ticketCount, ticketPrice, userid } = location.state || {};
+  const { movieTitle, theaterLocation, showTime, ticketCount, ticketPrice, userid, movieId } = location.state || {};
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [billingInfo, setBillingInfo] = useState({
     name: "",

@@ -129,6 +129,7 @@ const ButtonWrapper = styled("button")({
 interface MovieShowing {
   location: string;
   times: string[];
+  ticketsSold: number;
 }
 
 interface Movie {
@@ -155,7 +156,7 @@ function AdminPage() {
     movieLength: "",
     status: "Now Playing",
     posterURL: "",
-    showings: [{ location: "", times: [""] }],
+    showings: [{ location: "", times: [""], ticketsSold: 0 }],
     synopsis: "",
   });
 
@@ -210,7 +211,7 @@ function AdminPage() {
   const addShowing = () => {
     setNewMovie((prevMovie) => ({
       ...prevMovie,
-      showings: [...prevMovie.showings, { location: "", times: [""] }],
+      showings: [...prevMovie.showings, { location: "", times: [""], ticketsSold: 0 }],
     }));
   };
 
@@ -241,7 +242,7 @@ function AdminPage() {
       movieLength: "",
       status: "Now Playing",
       posterURL: "",
-      showings: [{ location: "", times: [""] }],
+      showings: [{ location: "", times: [""], ticketsSold: 0 }],
       synopsis: "",
     });
     getMovies();
@@ -401,7 +402,7 @@ function AdminPage() {
                     {movie.showings &&
                       movie.showings.map((showing, index) => (
                         <span key={index}>
-                          {showing.location}: {showing.times.join(", ")}
+                          {showing.location} ({showing.ticketsSold} sold): {showing.times.join(", ")}
                           {index < movie.showings.length - 1 ? " - " : ""}
                         </span>
                       ))}
