@@ -107,6 +107,57 @@ const PaymentPage: React.FC = () => {
       alert("Please fill out your billing information.");
       return;
     }
+
+    //determine credit card issuer (TODO: visa/mastercard/discover/amex icons? highlight one that matches current number?)
+    /*
+    const issuer = ( function() {
+        switch (paymentInfo.cardNumber[0]) {
+            case "3":
+                return "American Express";
+            case "4":
+                return "Visa";
+            case "5":
+                return "Mastercard";
+            case "6":
+                return "Discover";
+            default:
+                return "Unknown";
+        }
+    })();
+    alert("Payment Type: " + issuer)
+    */
+
+    
+    if (paymentInfo.cardNumber != "") {
+        //use Luhn algorithm to verify card validity
+        var luhnSum = 0;
+        for (let i = 0; i < paymentInfo.cardNumber.length; i++) {
+            if (i % 2 == 0) {
+                if (+paymentInfo.cardNumber[i] * 2 > 9) {
+                    luhnSum += (+paymentInfo.cardNumber[i] * 2) % 10 + 1;
+                } else {
+                    luhnSum += +paymentInfo.cardNumber[i] * 2;
+                }
+            } else {
+                luhnSum += +paymentInfo.cardNumber[i]; //number conv
+            }
+        }
+
+        if (luhnSum % 10 != 0) {
+            alert("Invalid credit card number - check that you entered the number correctly.");
+            return;
+        }
+    }
+
+    if (paymentInfo.expiryDate != "") {
+        //verify expiration date (hardcoded for now)
+        var dates = paymentInfo.expiryDate.split("/");
+        if (+dates[1] < 24 || (+dates[1] == 24 && +dates[0] < 12)) {
+            alert("Card expired - try a different payment method.");
+            return;
+        }
+    }
+
     alert(`Payment successful using ${paymentMethod}`);
     
     try {
