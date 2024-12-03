@@ -66,7 +66,15 @@ interface Ticket {
 
 const PaymentPage: React.FC = () => {
   const location = useLocation();
-  const { movieTitle, theaterLocation, showTime, ticketCount, ticketPrice, userid, movieId } = location.state || {};
+  const {
+    movieTitle,
+    theaterLocation,
+    showTime,
+    ticketCount,
+    ticketPrice,
+    userid,
+    movieId,
+  } = location.state || {};
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [billingInfo, setBillingInfo] = useState({
     name: "",
@@ -127,39 +135,40 @@ const PaymentPage: React.FC = () => {
     alert("Payment Type: " + issuer)
     */
 
-    
     if (paymentInfo.cardNumber != "") {
-        //use Luhn algorithm to verify card validity
-        var luhnSum = 0;
-        for (let i = 0; i < paymentInfo.cardNumber.length; i++) {
-            if (i % 2 == 0) {
-                if (+paymentInfo.cardNumber[i] * 2 > 9) {
-                    luhnSum += (+paymentInfo.cardNumber[i] * 2) % 10 + 1;
-                } else {
-                    luhnSum += +paymentInfo.cardNumber[i] * 2;
-                }
-            } else {
-                luhnSum += +paymentInfo.cardNumber[i]; //number conv
-            }
+      //use Luhn algorithm to verify card validity
+      var luhnSum = 0;
+      for (let i = 0; i < paymentInfo.cardNumber.length; i++) {
+        if (i % 2 == 0) {
+          if (+paymentInfo.cardNumber[i] * 2 > 9) {
+            luhnSum += ((+paymentInfo.cardNumber[i] * 2) % 10) + 1;
+          } else {
+            luhnSum += +paymentInfo.cardNumber[i] * 2;
+          }
+        } else {
+          luhnSum += +paymentInfo.cardNumber[i]; //number conv
         }
+      }
 
-        if (luhnSum % 10 != 0) {
-            alert("Invalid credit card number - check that you entered the number correctly.");
-            return;
-        }
+      if (luhnSum % 10 != 0) {
+        alert(
+          "Invalid credit card number - check that you entered the number correctly."
+        );
+        return;
+      }
     }
 
     if (paymentInfo.expiryDate != "") {
-        //verify expiration date (hardcoded for now)
-        var dates = paymentInfo.expiryDate.split("/");
-        if (+dates[1] < 24 || (+dates[1] == 24 && +dates[0] < 12)) {
-            alert("Card expired - try a different payment method.");
-            return;
-        }
+      //verify expiration date (hardcoded for now)
+      var dates = paymentInfo.expiryDate.split("/");
+      if (+dates[1] < 24 || (+dates[1] == 24 && +dates[0] < 12)) {
+        alert("Card expired - try a different payment method.");
+        return;
+      }
     }
 
     alert(`Payment successful using ${paymentMethod}`);
-    
+
     try {
       const ticketRef = ref(database, `users/${userid}/tickets`);
       await push(ticketRef, {
@@ -181,7 +190,7 @@ const PaymentPage: React.FC = () => {
         movieTitle: movieTitle,
         theaterLocation: theaterLocation,
         showTime: showTime,
-        ticketCount: ticketCount
+        ticketCount: ticketCount,
       },
     });
   };
@@ -189,7 +198,12 @@ const PaymentPage: React.FC = () => {
   return (
     <PaymentContainer>
       <WhiteCanvas>
-        <text>Total price: ${((parseFloat(ticketCount) * parseFloat(ticketPrice))*1.0625).toFixed(2)}</text>
+        <text>
+          Total price: $
+          {(parseFloat(ticketCount) * parseFloat(ticketPrice) * 1.0625).toFixed(
+            2
+          )}
+        </text>
         <h2>Select Payment Method</h2>
         <PaymentOption onClick={() => setPaymentMethod("PayPal")}>
           Pay with PayPal
