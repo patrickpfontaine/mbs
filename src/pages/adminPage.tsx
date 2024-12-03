@@ -56,7 +56,7 @@ const SloganTxt = styled("p")({
 
 const Title = styled("h1")({
   color: "Maroon",
-  fontFamily: "Inter",
+  fontFamily: "Montserrat, sans-serif",
   fontSize: "36px",
   marginBottom: "20px",
 });
@@ -396,16 +396,19 @@ function AdminPage() {
                 <MovieListItem key={movie.id}>
                   <span>
                     {movie.title} - {movie.year} - ${movie.price} -{" "}
-                    {movie.movieLength} hr - {movie.cast} - {movie.status}
-                    <br />
-                    Showings:{" "}
-                    {movie.showings &&
-                      movie.showings.map((showing, index) => (
-                        <span key={index}>
-                          {showing.location} ({showing.ticketsSold} sold): {showing.times.join(", ")}
-                          {index < movie.showings.length - 1 ? " - " : ""}
-                        </span>
-                      ))}
+                    {movie.movieLength} hr - {movie.status}
+                    {(movie.status === "Now Playing") && (
+                      <div>
+                        Showings:{" "}
+                        {movie.showings &&
+                          movie.showings.map((showing, index) => (
+                            <span key={index}>
+                              {showing.location} ({showing.ticketsSold} sold): {showing.times.join(", ")}
+                              {index < movie.showings.length - 1 ? " - " : ""}
+                            </span>
+                          ))}
+                      </div>
+                    )}
                   </span>
                   <Button onClick={() => handleDelete(movie.id)}>Delete</Button>
                 </MovieListItem>
