@@ -21,14 +21,14 @@ import {
   MenuItem,
   Button as MuiButton,
 } from "@mui/material";
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid2';
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid2";
 import {
   Unstable_NumberInput as BaseNumberInput,
   NumberInputProps,
   numberInputClasses,
-} from '@mui/base/Unstable_NumberInput';
+} from "@mui/base/Unstable_NumberInput";
 
 const Background = styled("div")({
   background: `linear-gradient(180deg, rgb(74, 50, 209) 0%, rgb(0, 0, 0) 100%)`,
@@ -53,7 +53,6 @@ const WhiteCanvas = styled("main")({
   flexDirection: `column`,
   alignItems: `center`,
 });
-
 
 const MovieTitle = styled("h1")({
   fontFamily: "Montserrat, sans-serif",
@@ -89,7 +88,7 @@ const HomeButton = styled("button")({
   border: `none`,
   cursor: "pointer",
   textAlign: "right",
-  alignItems: "right"
+  alignItems: "right",
   //padding: `10px`,
 });
 
@@ -218,16 +217,16 @@ interface Review {
 
 const NumberInput = React.forwardRef(function CustomNumberInput(
   props: NumberInputProps,
-  ref: React.ForwardedRef<HTMLDivElement>,
+  ref: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
     <BaseNumberInput
       slotProps={{
         incrementButton: {
-          children: '▴',
+          children: "▴",
         },
         decrementButton: {
-          children: '▾',
+          children: "▾",
         },
       }}
       {...props}
@@ -235,9 +234,6 @@ const NumberInput = React.forwardRef(function CustomNumberInput(
     />
   );
 });
-
-
-
 
 function CheckoutPage(): JSX.Element {
   const navigate = useNavigate();
@@ -331,7 +327,7 @@ function CheckoutPage(): JSX.Element {
       }
       navigate(`/PaymentPage`, {
         state: {
-          movieTitle: movie.title, 
+          movieTitle: movie.title,
           theaterLocation: selectedLocation,
           showTime: selectedTime,
           ticketCount: numTickets,
@@ -429,7 +425,7 @@ function CheckoutPage(): JSX.Element {
             <img src={HomeImage} alt="Home Page" />
           </HomeButton>
         </Header>
-        <Box sx={{ flexGrow: 1, bgcolor: "#FFFFFF", width: "85%"}}>
+        <Box sx={{ flexGrow: 1, bgcolor: "#FFFFFF", width: "85%" }}>
           <Grid container spacing={2}>
             <Grid size={3}>
               <MoviePoster>
@@ -446,25 +442,19 @@ function CheckoutPage(): JSX.Element {
                 />
               </MoviePoster>
             </Grid>
-            
+
             <Grid container spacing={1}>
               <Grid size={12} justifyContent={"left"} padding={"10px"}>
                 <MovieTitle>{movie.title}</MovieTitle>
-                <MovieInfo>
-                  {movie.year}
-                </MovieInfo>
-                <MovieInfo>
-                  {movie.cast}
-                </MovieInfo>
-                <MovieInfo>
-                  {movie.synopsis}
-                </MovieInfo>
+                <MovieInfo>{movie.year}</MovieInfo>
+                <MovieInfo>{movie.cast}</MovieInfo>
+                <MovieInfo>{movie.synopsis}</MovieInfo>
               </Grid>
             </Grid>
           </Grid>
         </Box>
-        
-        {movie.status === "Now Playing" &&    //only display purchase information if movie is now playing
+
+        {movie.status === "Now Playing" && ( //only display purchase information if movie is now playing
           <Box justifyItems={"left"}>
             <text>Ticket price: ${movie.price}</text>
             <LocationSelect
@@ -488,8 +478,8 @@ function CheckoutPage(): JSX.Element {
               placeholder="Number of tickets"
               value={numTickets}
               onChange={(event, val) => setNumTickets(val)}
-              min = {1}
-              max = {10}
+              min={1}
+              max={10}
             />
 
             <TimeButtonsContainer>
@@ -504,7 +494,7 @@ function CheckoutPage(): JSX.Element {
                 </Button2>
               ))}
             </TimeButtonsContainer>
-            
+
             <Button2
               onClick={handlePurchase}
               variant="contained"
@@ -514,9 +504,16 @@ function CheckoutPage(): JSX.Element {
               Purchase Ticket
             </Button2>
           </Box>
-        }
+        )}
 
-        <Box sx={{ flexGrow: 1, bgcolor: "#FFFFFF", width: "98%", marginTop: "70px"}}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            bgcolor: "#FFFFFF",
+            width: "98%",
+            marginTop: "70px",
+          }}
+        >
           <ReactStars
             count={5}
             value={rating}
@@ -582,4 +579,3 @@ function CheckoutPage(): JSX.Element {
 }
 
 export default CheckoutPage;
-

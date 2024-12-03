@@ -1,7 +1,6 @@
 import React from "react";
-import { QRCodeCanvas } from "qrcode.react";
 import { styled } from "@mui/material/styles";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import HomeImage from "../images/HomeIcon.png";
 
 const Background = styled("div")({
@@ -40,8 +39,6 @@ const HomeButton = styled("button")({
   background: "none",
   border: `none`,
   cursor: "pointer",
-  textAlign: "right",
-  alignItems: "right",
 });
 
 const Title = styled("h1")({
@@ -64,12 +61,6 @@ const Label = styled("span")({
   fontWeight: "bold",
 });
 
-const QRCodeContainer = styled("div")({
-  marginTop: "20px",
-  display: "flex",
-  justifyContent: "center",
-});
-
 const Button = styled("button")({
   marginTop: "20px",
   padding: "10px 20px",
@@ -84,13 +75,13 @@ const Button = styled("button")({
   },
 });
 
-const TicketPage: React.FC = () => {
+const ValidTicketPage: React.FC = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  // Destructure ticket details passed via location.state
-  const { name, movieTitle, theaterLocation, showTime, ticketCount } =
-    location.state || {};
+  const queryParams = new URLSearchParams(location.search);
+  const name = queryParams.get("name");
+  const movieTitle = queryParams.get("movieTitle");
+  const theaterLocation = queryParams.get("theaterLocation");
+  const showTime = queryParams.get("showTime");
 
   if (!name || !movieTitle || !theaterLocation || !showTime) {
     return (
@@ -98,9 +89,8 @@ const TicketPage: React.FC = () => {
         <WhiteCanvas>
           <Title>Invalid Ticket</Title>
           <Details>
-            Missing ticket details. Please go back and try again.
+            Missing ticket details. Please scan a valid QR code.
           </Details>
-          <Button onClick={() => navigate("/PaymentPage")}>Go Back</Button>
         </WhiteCanvas>
       </Background>
     );
@@ -110,11 +100,11 @@ const TicketPage: React.FC = () => {
     <Background>
       <WhiteCanvas>
         <Header>
-          <HomeButton onClick={() => navigate("/homePage")}>
+          <HomeButton onClick={() => (window.location.href = "/homePage")}>
             <img src={HomeImage} alt="Home Page" />
           </HomeButton>
         </Header>
-        <Title>Movie Ticket</Title>
+        <Title>Valid Ticket</Title>
         <Details>
           <Label>Name:</Label> {name}
         </Details>
@@ -127,27 +117,12 @@ const TicketPage: React.FC = () => {
         <Details>
           <Label>Showtime:</Label> {showTime}
         </Details>
-        <Details>
-          <Label>Tickets:</Label> {ticketCount}
-        </Details>
-        <QRCodeContainer>
-          <QRCodeCanvas
-            value={`${
-              window.location.origin
-            }/valid-ticket?name=${encodeURIComponent(
-              name
-            )}&movieTitle=${encodeURIComponent(
-              movieTitle
-            )}&theaterLocation=${encodeURIComponent(
-              theaterLocation
-            )}&showTime=${encodeURIComponent(showTime)}`}
-            size={150}
-          />
-        </QRCodeContainer>
-        <Button onClick={() => navigate("/homePage")}>Go to Home</Button>
+        <Button onClick={() => (window.location.href = "/homePage")}>
+          Go to Home
+        </Button>
       </WhiteCanvas>
     </Background>
   );
 };
 
-export default TicketPage;
+export default ValidTicketPage;

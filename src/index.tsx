@@ -15,7 +15,7 @@ import AdminPage from "./pages/adminPage";
 import CheckoutPage from "./pages/checkoutPage";
 import PaymentPage from "./pages/PaymentPage";
 import TicketPage from "./pages/TicketPage";
-import QrcodePage from "./pages/QrcodePage";
+import ValidTicket from "./pages/ValidTicket";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(
@@ -34,7 +34,7 @@ root.render(
         <Route path="/checkoutPage/:movieId" element={<CheckoutPage />} />
         <Route path="/PaymentPage" element={<PaymentPage />} />
         <Route path="/ticket" element={<TicketPage />} />
-        <Route path="/valid-ticket" element={<QrcodePage />} />
+        <Route path="/valid-ticket" element={<ValidTicket />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
